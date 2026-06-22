@@ -24,7 +24,7 @@ export type BedWithLocation = {
 };
 
 export async function getCampaignStats() {
-  const [bedStats] = await db
+  const bedStatsResults = await db
     .select({
       totalBeds: sql<number>`count(*)`,
       fundedBeds: sql<number>`sum(case when ${beds.status} in ('sponsored', 'occupied') then 1 else 0 end)`,
@@ -34,12 +34,16 @@ export async function getCampaignStats() {
     .from(beds)
     .where(eq(beds.fundingType, "sponsored_target"));
 
-  const [pledgeStats] = await db
+  const bedStats = bedStatsResults[0];
+
+  const pledgeStatsResults = await db
     .select({
       totalPledged: sql<number>`coalesce(sum(${sponsorshipPledges.amountPledged}), 0)`,
       totalPaid: sql<number>`coalesce(sum(${sponsorshipPledges.amountPaid}), 0)`,
     })
     .from(sponsorshipPledges);
+
+  const pledgeStats = pledgeStatsResults[0];
 
   return {
     totalBeds: bedStats?.totalBeds ?? 0,
