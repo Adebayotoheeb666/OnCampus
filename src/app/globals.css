@@ -1,8 +1,60 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fafaf9;
-  --foreground: #1c1917;
+  --background: #f9f9fc;
+  --foreground: #1a1c1e;
+  --primary: #00322d;
+  --surface-bright: #f9f9fc;
+  --surface-container-highest: #e2e2e5;
+  --on-primary-fixed: #00201c;
+  --status-occupied: #475569;
+  --on-background: #1a1c1e;
+  --status-available: #059669;
+  --surface-dim: #dadadc;
+  --on-surface: #1a1c1e;
+  --tertiary-fixed: #dee4e2;
+  --error-critical: #DC2626;
+  --on-tertiary-fixed: #171d1c;
+  --inverse-on-surface: #f0f0f3;
+  --error: #ba1a1a;
+  --inverse-surface: #2f3133;
+  --secondary-fixed: #d2e4ff;
+  --status-sponsored: #2563EB;
+  --primary-fixed: #b1eee4;
+  --surface-tint: #2b6860;
+  --secondary-container: #81b9ff;
+  --secondary: #1961a1;
+  --outline-variant: #bfc9c6;
+  --on-primary-fixed-variant: #095049;
+  --error-container: #ffdad6;
+  --on-error: #ffffff;
+  --on-tertiary-container: #aab0ae;
+  --on-secondary-fixed: #001c37;
+  --on-secondary: #ffffff;
+  --tertiary: #282d2c;
+  --on-error-container: #93000a;
+  --outline: #707977;
+  --tertiary-fixed-dim: #c2c8c6;
+  --on-secondary-container: #004980;
+  --surface-container-low: #f3f3f6;
+  --primary-fixed-dim: #95d2c8;
+  --surface-container-lowest: #ffffff;
+  --on-tertiary-fixed-variant: #424847;
+  --impact-gold: #B45309;
+  --tertiary-container: #3e4342;
+  --on-tertiary: #ffffff;
+  --on-secondary-fixed-variant: #004880;
+  --inverse-primary: #95d2c8;
+  --surface-container-high: #e8e8ea;
+  --status-maintenance: #D97706;
+  --secondary-fixed-dim: #a1c9ff;
+  --on-primary-container: #7ebab0;
+  --on-primary: #ffffff;
+  --surface-container: #eeeef0;
+  --primary-container: #004b44;
+  --on-surface-variant: #3f4947;
+  --surface-variant: #e2e2e5;
+  --surface: #f9f9fc;
 }
 
 body {
@@ -19,6 +71,20 @@ textarea {
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: #047857;
-  box-shadow: 0 0 0 2px rgb(4 120 87 / 0.15);
+  border-color: #00322d;
+  box-shadow: 0 0 0 2px rgb(0 50 45 / 0.15);
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+.impact-gradient {
+  background: linear-gradient(90deg, #00322d 0%, #B45309 100%);
+}
+
+.glass-header {
+  backdrop-filter: blur(8px);
+  background: rgba(249, 249, 252, 0.85);
 }
