@@ -1,4 +1,4 @@
-import { eq, desc, and, asc, lte, isNull, or } from "drizzle-orm";
+import { eq, desc, and, asc, lte, isNull, or, sql } from "drizzle-orm";
 import { db } from "@/db";
 import {
   applicants,
@@ -33,6 +33,28 @@ export async function getApplicants(filters?: {
 export async function getApplicantById(id: string) {
   const [row] = await db.select().from(applicants).where(eq(applicants.id, id)).limit(1);
   return row ?? null;
+}
+
+export async function getApplicantDetails(id: string) {
+  const [applicant] = await db
+    .select({
+      applicant: applicants,
+      auditTrail: sql<string>`group_concat(json_object('action', ${allocationAuditLog.action}, 'notes', ${allocationAuditLog.notes}, 'createdAt', ${allocationAuditLog.createdAt}, 'performedBy', ${allocationAuditLog.performedBy}))`,
+    })
+    .from(applicants)
+    .leftJoin(allocationAuditLog, eq(applicants.id, allocationAuditLog.applicantId))
+    .where(eq(applicants.id, id))
+    .groupBy(applicants.id)
+    .limit(1);
+
+  if (!applicant) return null;
+
+  return {
+    ...applicant,
+    needAssessment: applicant.applicant.needAssessmentJson
+      ? JSON.parse(applicant.applicant.needAssessmentJson)
+      : null,
+  };
 }
 
 export async function lookupApplicant(params: {
@@ -212,4 +234,59 @@ export async function getAvailableBedsForAllocation(type: "free_bed" | "paid_bed
         isNull(beds.currentTenantId),
       ),
     );
+}
+
+export async function getApplicantsForReview(status?: string) {
+  const conditions = [];
+  if (status) {
+    conditions.push(eq(applicants.status, status as "submitted"));
+  } else {
+    conditions.push(eq(applicants.status, "submitted"));
+  }
+
+  return db
+    .select({
+      applicant: applicants,
+      auditCount: sql<number>`count(${allocationAuditLog.id})`,
+    })
+    .from(applicants)
+    .leftJoin(allocationAuditLog, eq(applicants.id, allocationAuditLog.applicantId))
+    .where(conditions.length ? and(...conditions) : undefined)
+    .groupBy(applicants.id)
+    .orderBy(desc(applicants.needScore), desc(applicants.createdAt));
+}
+
+export async function getAuditLogEntries(filters?: {
+  applicantId?: string;
+  action?: string;
+  limit?: number;
+}) {
+  const conditions = [];
+  if (filters?.applicantId) {
+    conditions.push(eq(allocationAuditLog.applicantId, filters.applicantId));
+  }
+  if (filters?.action) {
+    conditions.push(eq(allocationAuditLog.action, filters.action as "scored"));
+  }
+
+  const result = db
+    .select({
+      log: allocationAuditLog,
+      applicantName: applicants.fullName,
+      bedLabel: beds.bedLabel,
+      blockName: blocks.name,
+    })
+    .from(allocationAuditLog)
+    .innerJoin(applicants, eq(allocationAuditLog.applicantId, applicants.id))
+    .leftJoin(beds, eq(allocationAuditLog.bedId, beds.id))
+    .leftJoin(rooms, eq(beds.roomId, rooms.id))
+    .leftJoin(blocks, eq(rooms.blockId, blocks.id))
+    .where(conditions.length ? and(...conditions) : undefined)
+    .orderBy(desc(allocationAuditLog.createdAt));
+
+  if (filters?.limit) {
+    return result.limit(filters.limit);
+  }
+
+  return result;
 }

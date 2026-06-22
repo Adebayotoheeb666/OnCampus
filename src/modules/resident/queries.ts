@@ -6,6 +6,12 @@ import {
   laundromatBookings,
   announcements,
   visitorLogs,
+  tenants,
+  applicants,
+  beds,
+  rooms,
+  blocks,
+  wallets,
 } from "@/db/schema";
 
 export async function getMaintenanceRequestsForTenant(tenantId: string) {
@@ -88,4 +94,73 @@ export async function getExpectedVisitors() {
     .from(visitorLogs)
     .where(eq(visitorLogs.status, "expected"))
     .orderBy(visitorLogs.expectedArrival);
+}
+
+export async function getTenantProfile(tenantId: string) {
+  const rows = await db
+    .select({
+      tenant: tenants,
+      applicant: applicants,
+      bedLabel: beds.bedLabel,
+      blockName: blocks.name,
+      roomNumber: rooms.roomNumber,
+    })
+    .from(tenants)
+    .innerJoin(applicants, eq(tenants.applicantId, applicants.id))
+    .innerJoin(beds, eq(tenants.bedId, beds.id))
+    .innerJoin(rooms, eq(beds.roomId, rooms.id))
+    .innerJoin(blocks, eq(rooms.blockId, blocks.id))
+    .where(eq(tenants.id, tenantId));
+
+  return rows[0] ?? null;
+}
+
+export async function getResidentDashboardData(tenantId: string) {
+  const [profile] = await db
+    .select({
+      tenant: tenants,
+      applicant: applicants,
+      bedLabel: beds.bedLabel,
+    })
+    .from(tenants)
+    .innerJoin(applicants, eq(tenants.applicantId, applicants.id))
+    .innerJoin(beds, eq(tenants.bedId, beds.id))
+    .where(eq(tenants.id, tenantId));
+
+  if (!profile) return null;
+
+  // Get pending maintenance
+  const maintenance = await db
+    .select()
+    .from(maintenanceRequests)
+    .where(
+      and(
+        eq(maintenanceRequests.tenantId, tenantId),
+        sql`${maintenanceRequests.status} != 'resolved'`,
+      ),
+    );
+
+  // Get upcoming bookings
+  const bookings = await db
+    .select()
+    .from(laundromatBookings)
+    .where(
+      and(
+        eq(laundromatBookings.tenantId, tenantId),
+        eq(laundromatBookings.status, "booked"),
+      ),
+    )
+    .orderBy(laundromatBookings.slotStart)
+    .limit(3);
+
+  // Get wallet
+  const tenantWallets = await db.select().from(wallets).where(eq(wallets.tenantId, tenantId));
+
+  return {
+    profile,
+    maintenanceCount: maintenance.length,
+    upcomingBookings: bookings.length,
+    walletBalance: tenantWallets[0]?.balance ?? 0,
+    sessionEnd: profile.tenant.sessionEnd,
+  };
 }

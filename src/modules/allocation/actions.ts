@@ -267,3 +267,58 @@ export async function checkoutTenant(tenantId: string, notes: string) {
     createdAt: now,
   });
 }
+
+export async function allocateBedToApplicantManual(
+  applicantId: string,
+  bedId: string,
+  performedBy: string,
+  notes: string,
+) {
+  const [applicant] = await db
+    .select()
+    .from(applicants)
+    .where(eq(applicants.id, applicantId))
+    .limit(1);
+
+  if (!applicant) throw new Error("Applicant not found");
+  if (applicant.status === "allocated") throw new Error("Applicant already allocated");
+
+  const [bed] = await db.select().from(beds).where(eq(beds.id, bedId)).limit(1);
+  if (!bed) throw new Error("Bed not found");
+  if (bed.currentTenantId) throw new Error("Bed is already occupied");
+
+  // Perform the allocation (reuse existing logic)
+  return await allocateApplicant(applicantId, bedId, notes, performedBy);
+}
+
+export async function rejectApplicant(applicantId: string, reason: string, performedBy = "admin") {
+  const [applicant] = await db
+    .select()
+    .from(applicants)
+    .where(eq(applicants.id, applicantId))
+    .limit(1);
+
+  if (!applicant) throw new Error("Applicant not found");
+
+  const now = new Date();
+
+  await db.update(applicants).set({ status: "rejected" }).where(eq(applicants.id, applicantId));
+
+  await db.insert(allocationAuditLog).values({
+    id: `alog_${nanoid(12)}`,
+    applicantId,
+    action: "rejected",
+    performedBy,
+    notes: reason,
+    createdAt: now,
+  });
+
+  await db.insert(auditLog).values({
+    id: `audit_${nanoid(12)}`,
+    action: "applicant_rejected",
+    targetEntity: "applicants",
+    targetId: applicantId,
+    metadata: JSON.stringify({ reason }),
+    createdAt: now,
+  });
+}

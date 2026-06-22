@@ -3,7 +3,7 @@
 import { nanoid } from "nanoid";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { sponsors, sponsorshipPledges, sponsorPayments, auditLog } from "@/db/schema";
+import { sponsors, sponsorshipPledges, sponsorPayments, auditLog, beds } from "@/db/schema";
 import { SPONSORSHIP_TIERS } from "@/lib/constants";
 import { pledgeCheckoutSchema } from "@/lib/validations/sponsor";
 import { initializePaystackTransaction } from "@/lib/payments/paystack";
@@ -104,4 +104,53 @@ export async function updateSponsorPipelineStatus(
     metadata: JSON.stringify({ status }),
     createdAt: now,
   });
+}
+
+export async function fulfillPledge(pledgeId: string) {
+  const [pledge] = await db
+    .select()
+    .from(sponsorshipPledges)
+    .where(eq(sponsorshipPledges.id, pledgeId))
+    .limit(1);
+
+  if (!pledge) throw new Error("Pledge not found");
+  if (pledge.status === "fulfilled") throw new Error("Pledge already fulfilled");
+
+  const now = new Date();
+
+  // Update pledge status
+  await db
+    .update(sponsorshipPledges)
+    .set({ status: "fulfilled" })
+    .where(eq(sponsorshipPledges.id, pledgeId));
+
+  // Update bed status to "sponsored" if fully funded
+  if (pledge.bedId) {
+    // Check if all pledges for this bed are fulfilled
+    const allPledges = await db
+      .select()
+      .from(sponsorshipPledges)
+      .where(eq(sponsorshipPledges.bedId, pledge.bedId));
+
+    const allFulfilled = allPledges.every(p => p.status === "fulfilled");
+
+    if (allFulfilled) {
+      await db
+        .update(beds)
+        .set({ status: "sponsored" })
+        .where(eq(beds.id, pledge.bedId));
+    }
+  }
+
+  // Log to audit trail
+  await db.insert(auditLog).values({
+    id: `audit_${nanoid(12)}`,
+    action: "pledge_fulfilled",
+    targetEntity: "sponsorship_pledges",
+    targetId: pledgeId,
+    metadata: JSON.stringify({ bedId: pledge.bedId }),
+    createdAt: now,
+  });
+
+  return pledge;
 }

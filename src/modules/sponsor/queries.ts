@@ -176,3 +176,68 @@ export async function getCertificatesForSponsor(sponsorId: string) {
     .innerJoin(sponsorshipPledges, eq(sponsorCertificates.pledgeId, sponsorshipPledges.id))
     .where(eq(sponsorshipPledges.sponsorId, sponsorId));
 }
+
+export async function getPledgeDetails(pledgeId: string) {
+  const [pledge] = await db
+    .select({
+      pledge: sponsorshipPledges,
+      sponsor: sponsors,
+      bedLabel: beds.bedLabel,
+      blockName: blocks.name,
+      roomNumber: rooms.roomNumber,
+    })
+    .from(sponsorshipPledges)
+    .innerJoin(sponsors, eq(sponsorshipPledges.sponsorId, sponsors.id))
+    .leftJoin(beds, eq(sponsorshipPledges.bedId, beds.id))
+    .leftJoin(rooms, eq(beds.roomId, rooms.id))
+    .leftJoin(blocks, eq(rooms.blockId, blocks.id))
+    .where(eq(sponsorshipPledges.id, pledgeId))
+    .limit(1);
+
+  return pledge ?? null;
+}
+
+export async function getSponsorPaymentHistory(sponsorId: string) {
+  return db
+    .select({
+      payment: sponsorPayments,
+      pledge: sponsorshipPledges,
+      bedLabel: beds.bedLabel,
+    })
+    .from(sponsorPayments)
+    .innerJoin(sponsorshipPledges, eq(sponsorPayments.pledgeId, sponsorshipPledges.id))
+    .leftJoin(beds, eq(sponsorshipPledges.bedId, beds.id))
+    .innerJoin(sponsors, eq(sponsorshipPledges.sponsorId, sponsors.id))
+    .where(eq(sponsors.id, sponsorId))
+    .orderBy(desc(sponsorPayments.paidAt));
+}
+
+export async function getRecentCertificates(limit = 10) {
+  return db
+    .select({
+      certificate: sponsorCertificates,
+      sponsor: sponsors,
+      pledgeId: sponsorshipPledges.id,
+      bedLabel: beds.bedLabel,
+    })
+    .from(sponsorCertificates)
+    .innerJoin(sponsorshipPledges, eq(sponsorCertificates.pledgeId, sponsorshipPledges.id))
+    .innerJoin(sponsors, eq(sponsorshipPledges.sponsorId, sponsors.id))
+    .leftJoin(beds, eq(sponsorshipPledges.bedId, beds.id))
+    .orderBy(desc(sponsorCertificates.issuedAt))
+    .limit(limit);
+}
+
+export async function getSponsorsForCrmBoard() {
+  return db
+    .select({
+      sponsor: sponsors,
+      pledgeCount: sql<number>`count(${sponsorshipPledges.id})`,
+      totalPledged: sql<number>`coalesce(sum(${sponsorshipPledges.amountPledged}), 0)`,
+      totalPaid: sql<number>`coalesce(sum(${sponsorshipPledges.amountPaid}), 0)`,
+    })
+    .from(sponsors)
+    .leftJoin(sponsorshipPledges, eq(sponsors.id, sponsorshipPledges.sponsorId))
+    .groupBy(sponsors.id)
+    .orderBy(desc(sponsors.updatedAt));
+}

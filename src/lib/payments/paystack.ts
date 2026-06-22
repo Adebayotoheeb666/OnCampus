@@ -1,3 +1,5 @@
+import { createHmac } from "crypto";
+
 type PaystackInitParams = {
   email: string;
   amountKobo: number;
@@ -82,11 +84,18 @@ export function verifyPaystackSignature(
   signature: string | null,
 ): boolean {
   const secret = process.env.PAYSTACK_SECRET_KEY;
-  if (!secret || !signature) {
+  
+  // In development without API key, allow all webhooks for testing
+  if (!secret) {
     return process.env.NODE_ENV === "development";
   }
 
-  void rawBody;
-  void signature;
-  return process.env.NODE_ENV === "development";
+  if (!signature) {
+    return false;
+  }
+
+  // Verify using HMAC SHA512
+  const hash = createHmac("sha512", secret).update(rawBody).digest("hex");
+  
+  return hash === signature;
 }
