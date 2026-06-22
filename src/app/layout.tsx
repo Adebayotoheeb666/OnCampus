@@ -2,6 +2,8 @@ import "@/app/globals.css";
 import type { Metadata } from "next";
 import { SiteHeader } from "@/components/layout/site-header";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "OnCampus — Sponsor a Bed | FUTA",
   description:
