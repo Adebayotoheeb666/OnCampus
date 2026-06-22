@@ -11,7 +11,7 @@ export function HomeHeader() {
           <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold">
             <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
           </div>
-          <span className="text-2xl font-extrabold text-primary hidden sm:inline">OnCampus</span>
+          <span className="text-2xl font-bold text-primary hidden sm:inline">OnCampus</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-8">

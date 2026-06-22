@@ -1,6 +1,5 @@
 import "@/app/globals.css";
 import type { Metadata } from "next";
-import { HomeHeader } from "@/components/layout/home-header";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         `}</style>
       </head>
       <body className="min-h-screen bg-background text-on-background pb-20 md:pb-0">
-        <HomeHeader />
+        {/* <HomeHeader /> */}
         <main>{children}</main>
         <footer className="mt-16 border-t border-outline-variant bg-surface-container-low">
           <div className="mx-auto max-w-6xl px-4 md:px-6 py-12">

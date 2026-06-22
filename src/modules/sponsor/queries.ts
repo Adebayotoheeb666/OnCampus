@@ -24,33 +24,44 @@ export type BedWithLocation = {
 };
 
 export async function getCampaignStats() {
-  const bedStatsResults = await db
-    .select({
-      totalBeds: sql<number>`count(*)`,
-      fundedBeds: sql<number>`sum(case when ${beds.status} in ('sponsored', 'occupied') then 1 else 0 end)`,
-      totalRaised: sql<number>`coalesce(sum(${beds.fundedAmountKobo}), 0)`,
-      totalTarget: sql<number>`coalesce(sum(${beds.targetAmountKobo}), 0)`,
-    })
-    .from(beds)
-    .where(eq(beds.fundingType, "sponsored_target"));
+  try {
+    const bedStatsResults = await db
+      .select({
+        totalBeds: sql<number>`count(*)`,
+        fundedBeds: sql<number>`sum(case when ${beds.status} in ('sponsored', 'occupied') then 1 else 0 end)`,
+        totalRaised: sql<number>`coalesce(sum(${beds.fundedAmountKobo}), 0)`,
+        totalTarget: sql<number>`coalesce(sum(${beds.targetAmountKobo}), 0)`,
+      })
+      .from(beds)
+      .where(eq(beds.fundingType, "sponsored_target"));
 
-  const bedStats = bedStatsResults[0];
+    const bedStats = bedStatsResults[0];
 
-  const pledgeStatsResults = await db
-    .select({
-      totalPledged: sql<number>`coalesce(sum(${sponsorshipPledges.amountPledged}), 0)`,
-      totalPaid: sql<number>`coalesce(sum(${sponsorshipPledges.amountPaid}), 0)`,
-    })
-    .from(sponsorshipPledges);
+    const pledgeStatsResults = await db
+      .select({
+        totalPledged: sql<number>`coalesce(sum(${sponsorshipPledges.amountPledged}), 0)`,
+        totalPaid: sql<number>`coalesce(sum(${sponsorshipPledges.amountPaid}), 0)`,
+      })
+      .from(sponsorshipPledges);
 
-  const pledgeStats = pledgeStatsResults[0];
+    const pledgeStats = pledgeStatsResults[0];
 
-  return {
-    totalBeds: bedStats?.totalBeds ?? 0,
-    fundedBeds: bedStats?.fundedBeds ?? 0,
-    totalRaised: pledgeStats?.totalPaid ?? bedStats?.totalRaised ?? 0,
-    totalTarget: bedStats?.totalTarget ?? 0,
-  };
+    return {
+      totalBeds: bedStats?.totalBeds ?? 0,
+      fundedBeds: bedStats?.fundedBeds ?? 0,
+      totalRaised: pledgeStats?.totalPaid ?? bedStats?.totalRaised ?? 0,
+      totalTarget: bedStats?.totalTarget ?? 0,
+    };
+  } catch (error) {
+    console.error("[v0] Campaign stats query failed:", error);
+    // Return default stats when database is unavailable
+    return {
+      totalBeds: 0,
+      fundedBeds: 0,
+      totalRaised: 0,
+      totalTarget: 0,
+    };
+  }
 }
 
 export async function getAvailableBeds(filters?: {
@@ -58,36 +69,42 @@ export async function getAvailableBeds(filters?: {
   gender?: string;
   status?: string;
 }) {
-  const conditions = [eq(beds.fundingType, "sponsored_target")];
+  try {
+    const conditions = [eq(beds.fundingType, "sponsored_target")];
 
-  if (filters?.status) {
-    conditions.push(eq(beds.status, filters.status as "available"));
+    if (filters?.status) {
+      conditions.push(eq(beds.status, filters.status as "available"));
+    }
+
+    const rows = await db
+      .select({
+        id: beds.id,
+        bedLabel: beds.bedLabel,
+        status: beds.status,
+        fundingType: beds.fundingType,
+        targetAmountKobo: beds.targetAmountKobo,
+        fundedAmountKobo: beds.fundedAmountKobo,
+        roomNumber: rooms.roomNumber,
+        blockName: blocks.name,
+        blockGender: blocks.gender,
+        blockId: blocks.id,
+      })
+      .from(beds)
+      .innerJoin(rooms, eq(beds.roomId, rooms.id))
+      .innerJoin(blocks, eq(rooms.blockId, blocks.id))
+      .where(and(...conditions))
+      .orderBy(blocks.name, rooms.roomNumber, beds.bedLabel);
+
+    return rows.filter((row) => {
+      if (filters?.blockId && row.blockId !== filters.blockId) return false;
+      if (filters?.gender && row.blockGender !== filters.gender) return false;
+      return true;
+    }) satisfies BedWithLocation[];
+  } catch (error) {
+    console.error("[v0] Available beds query failed:", error);
+    // Return empty array when database is unavailable
+    return [];
   }
-
-  const rows = await db
-    .select({
-      id: beds.id,
-      bedLabel: beds.bedLabel,
-      status: beds.status,
-      fundingType: beds.fundingType,
-      targetAmountKobo: beds.targetAmountKobo,
-      fundedAmountKobo: beds.fundedAmountKobo,
-      roomNumber: rooms.roomNumber,
-      blockName: blocks.name,
-      blockGender: blocks.gender,
-      blockId: blocks.id,
-    })
-    .from(beds)
-    .innerJoin(rooms, eq(beds.roomId, rooms.id))
-    .innerJoin(blocks, eq(rooms.blockId, blocks.id))
-    .where(and(...conditions))
-    .orderBy(blocks.name, rooms.roomNumber, beds.bedLabel);
-
-  return rows.filter((row) => {
-    if (filters?.blockId && row.blockId !== filters.blockId) return false;
-    if (filters?.gender && row.blockGender !== filters.gender) return false;
-    return true;
-  }) satisfies BedWithLocation[];
 }
 
 export async function getBedById(bedId: string) {

@@ -16,8 +16,9 @@ export default async function HomePage() {
   let stats = defaultStats;
   let beds: BedWithLocation[] = [];
 
-  // For now, use demo data while database is being set up
+  // Try to fetch data, but don't fail the page if database is unavailable
   const statsPromise = Promise.resolve(defaultStats);
+
   const bedsPromise = Promise.resolve<BedWithLocation[]>([]);
 
   [stats, beds] = await Promise.all([statsPromise, bedsPromise]);

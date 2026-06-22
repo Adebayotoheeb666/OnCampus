@@ -28,7 +28,7 @@ export function HeroSection({ campaignPercent, totalRaised, totalTarget, fundedB
             <span className="text-xs font-semibold tracking-wider uppercase">FUTA Official Partner</span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-extrabold text-primary leading-tight">
+          <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight">
             Change a Life,&nbsp;<br className="hidden md:block" /> One Bed at a Time
           </h1>
 
