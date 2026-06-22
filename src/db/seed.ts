@@ -9,6 +9,7 @@ import {
   announcements,
   assets,
   maintenanceSchedules,
+  applicants,
 } from "@/db/schema";
 import { SPONSORSHIP_TIERS } from "@/lib/constants";
 
@@ -132,8 +133,86 @@ async function seed() {
     status: "scheduled",
   });
 
+  // Seed applicants
+  const applicantData = [
+    {
+      fullName: "Chioma Okafor",
+      matricOrJambNo: "FT/2023/001",
+      level: "100",
+      gender: "female",
+      phone: "+2348012345678",
+      email: "chioma@example.com",
+      stateOfOrigin: "Lagos",
+      needScore: 85,
+      applicationType: "free_bed" as const,
+      status: "submitted" as const,
+    },
+    {
+      fullName: "Adebayo Adeleke",
+      matricOrJambNo: "FT/2023/002",
+      level: "100",
+      gender: "male",
+      phone: "+2348012345679",
+      email: "adebayo@example.com",
+      stateOfOrigin: "Oyo",
+      needScore: 72,
+      applicationType: "free_bed" as const,
+      status: "submitted" as const,
+    },
+    {
+      fullName: "Fatima Hassan",
+      matricOrJambNo: "FT/2023/003",
+      level: "200",
+      gender: "female",
+      phone: "+2348012345680",
+      email: "fatima@example.com",
+      stateOfOrigin: "Kano",
+      needScore: 78,
+      applicationType: "paid_bed" as const,
+      status: "submitted" as const,
+    },
+    {
+      fullName: "Emeka Nwankwo",
+      matricOrJambNo: "FT/2023/004",
+      level: "100",
+      gender: "male",
+      phone: "+2348012345681",
+      email: "emeka@example.com",
+      stateOfOrigin: "Enugu",
+      needScore: 91,
+      applicationType: "free_bed" as const,
+      status: "submitted" as const,
+    },
+  ];
+
+  for (const data of applicantData) {
+    const incomeBrackets = ["below_50k", "50k_100k", "100k_200k", "above_200k"] as const;
+    const distanceCategories = ["onsite", "nearby", "far"] as const;
+    const guardianStatuses = ["orphan", "single_parent", "both_parents"] as const;
+    
+    await db.insert(applicants).values({
+      id: `app_${nanoid(8)}`,
+      fullName: data.fullName,
+      matricOrJambNo: data.matricOrJambNo,
+      level: data.level,
+      gender: data.gender,
+      phone: data.phone,
+      email: data.email,
+      stateOfOrigin: data.stateOfOrigin,
+      needScore: data.needScore,
+      needAssessmentJson: JSON.stringify({
+        incomeBracket: incomeBrackets[Math.floor(Math.random() * incomeBrackets.length)],
+        distanceCategory: distanceCategories[Math.floor(Math.random() * distanceCategories.length)],
+        guardianStatus: guardianStatuses[Math.floor(Math.random() * guardianStatuses.length)],
+      }),
+      applicationType: data.applicationType,
+      status: data.status,
+      createdAt: now,
+    });
+  }
+
   console.log(
-    "Seed complete: 2 blocks, 14 beds, 4 laundromat machines, 1 announcement, 1 asset",
+    "Seed complete: 2 blocks, 14 beds, 4 laundromat machines, 1 announcement, 1 asset, 4 applicants",
   );
 }
 
