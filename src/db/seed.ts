@@ -1,10 +1,32 @@
+import { nanoid } from "nanoid";
 import { db } from "@/db";
+import { users } from "@/db/schema";
 
 async function seed() {
-  // Seed script is intentionally empty.
-  // All data should be created through the application's API and interfaces,
-  // not through database seeds. Mock data has been removed.
-  console.log("Seed complete: No mock data is seeded.");
+  const adminEmail = process.env.ADMIN_EMAIL ?? "admin@oncampus.ng";
+
+  const [existingAdmin] = await db
+    .select()
+    .from(users)
+    .where((user) => user.email === adminEmail)
+    .limit(1)
+    .catch(() => []);
+
+  if (!existingAdmin) {
+    await db.insert(users).values({
+      id: `user_${nanoid(12)}`,
+      email: adminEmail,
+      fullName: "Administrator",
+      role: "super_admin",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    console.log(`Admin user created: ${adminEmail}`);
+  } else {
+    console.log(`Admin user already exists: ${adminEmail}`);
+  }
+
+  console.log("Seed complete.");
 }
 
 seed().catch((err) => {

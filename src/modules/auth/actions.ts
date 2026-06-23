@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { eq } from "drizzle-orm";
 import { getTenantByApplicantLookup } from "@/modules/allocation/queries";
 import {
   setResidentSession,
@@ -11,6 +12,8 @@ import {
   clearSponsorSession,
 } from "@/lib/auth/session";
 import { verifySponsorOtp } from "@/modules/auth/otp";
+import { db } from "@/db";
+import { users } from "@/db/schema";
 
 export async function loginResident(email: string, matricOrJambNo: string) {
   const row = await getTenantByApplicantLookup(email, matricOrJambNo);
@@ -28,16 +31,24 @@ export async function loginResident(email: string, matricOrJambNo: string) {
 }
 
 export async function loginAdmin(email: string, password: string) {
-  const adminPassword = process.env.ADMIN_PASSWORD ?? "admin123";
-  const adminEmail = process.env.ADMIN_EMAIL ?? "admin@oncampus.ng";
+  const [admin] = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, email))
+    .limit(1);
 
-  if (email !== adminEmail || password !== adminPassword) {
+  if (!admin || admin.role === "resident" || admin.role === "sponsor") {
+    return { success: false as const, error: "Invalid credentials." };
+  }
+
+  const adminPassword = process.env.ADMIN_PASSWORD ?? "admin123";
+  if (password !== adminPassword) {
     return { success: false as const, error: "Invalid credentials." };
   }
 
   await setAdminSession({
     type: "admin",
-    role: "super_admin",
+    role: admin.role as "super_admin" | "allocation_officer" | "finance_officer" | "facilities_staff" | "security_staff",
     email,
   });
 

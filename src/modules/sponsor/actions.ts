@@ -3,7 +3,7 @@
 import { nanoid } from "nanoid";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { sponsors, sponsorshipPledges, sponsorPayments, auditLog } from "@/db/schema";
+import { sponsors, sponsorshipPledges, sponsorPayments, auditLog, users } from "@/db/schema";
 import { SPONSORSHIP_TIERS } from "@/lib/constants";
 import { pledgeCheckoutSchema } from "@/lib/validations/sponsor";
 import { initializePaystackTransaction } from "@/lib/payments/paystack";
@@ -36,6 +36,17 @@ export async function createSponsorshipCheckout(
       phone: data.phone || null,
       isDiaspora: data.isDiaspora,
       status: "committed",
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    await db.insert(users).values({
+      id: `user_${nanoid(12)}`,
+      email: data.email,
+      phone: data.phone || null,
+      fullName: data.fullName,
+      role: "sponsor",
+      sponsorId,
       createdAt: now,
       updatedAt: now,
     });
