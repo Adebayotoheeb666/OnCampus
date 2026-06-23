@@ -27,7 +27,7 @@ export async function getCampaignStats() {
   const [bedStats] = await db
     .select({
       totalBeds: sql<number>`count(*)`,
-      fundedBeds: sql<number>`sum(case when ${beds.status} in ('sponsored', 'occupied') then 1 else 0 end)`,
+      fundedBeds: sql<number>`sum(case when ${beds.status} = 'sponsored' or ${beds.status} = 'occupied' then 1 else 0 end)`,
       totalRaised: sql<number>`coalesce(sum(${beds.fundedAmountKobo}), 0)`,
       totalTarget: sql<number>`coalesce(sum(${beds.targetAmountKobo}), 0)`,
     })
