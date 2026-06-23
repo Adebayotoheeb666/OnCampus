@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { BedCard } from "@/components/sponsor/bed-card";
-import { CAMPAIGN_TARGET_BEDS } from "@/lib/constants";
 import { formatNaira } from "@/lib/utils";
 import {
   containerVariants,
@@ -34,12 +33,14 @@ interface HomePageClientProps {
   stats: Stats;
   featuredBeds: Bed[];
   campaignPercent: number;
+  housedStudents: number;
 }
 
 export function HomePageClient({
   stats,
   featuredBeds,
   campaignPercent,
+  housedStudents,
 }: HomePageClientProps) {
   return (
     <>
@@ -163,12 +164,15 @@ export function HomePageClient({
               variants={cardVariants}
               className="bg-[var(--surface-container-lowest)] p-6 rounded-xl border border-[var(--outline-variant)] flex flex-col justify-center items-center text-center shadow-sm"
             >
-              <span
+              <motion.span
                 className="text-4xl font-bold text-[var(--primary)]"
                 style={{ fontFamily: "Manrope" }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
               >
-                {CAMPAIGN_TARGET_BEDS}+
-              </span>
+                {housedStudents}+
+              </motion.span>
               <span className="font-bold text-xs text-[var(--on-surface-variant)] mt-2 tracking-widest">
                 STUDENTS HOUSED
               </span>
