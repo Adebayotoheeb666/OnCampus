@@ -8,7 +8,7 @@ const navLinks = [
   { href: "/resident", label: "Resident" },
   { href: "/impact", label: "Impact" },
   { href: "/sponsor/portal", label: "My Pledges" },
-  { href: "/admin/allocation", label: "Admin" },
+  { href: "/admin", label: "Admin" },
 ];
 
 export function SiteHeader() {

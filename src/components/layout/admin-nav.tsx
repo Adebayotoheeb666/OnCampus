@@ -2,6 +2,7 @@ import Link from "next/link";
 import { logoutAdmin } from "@/modules/auth/actions";
 
 const adminLinks = [
+  { href: "/admin", label: "Dashboard" },
   { href: "/admin/sponsors", label: "Sponsors" },
   { href: "/admin/beds", label: "Beds" },
   { href: "/admin/allocation", label: "Allocation" },
