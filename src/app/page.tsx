@@ -1,44 +1,15 @@
-"use client";
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ProgressBar } from "@/components/ui/progress-bar";
 import { BedCard } from "@/components/sponsor/bed-card";
 import { CAMPAIGN_TARGET_BEDS } from "@/lib/constants";
 import { formatNaira, fundingPercent } from "@/lib/utils";
 import { getAvailableBeds, getCampaignStats } from "@/modules/sponsor/queries";
-import { useEffect, useState } from "react";
 
-export default function HomePage() {
-  const [stats, setStats] = useState<any>(null);
-  const [beds, setBeds] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const [statsData, bedsData] = await Promise.all([
-          getCampaignStats(),
-          getAvailableBeds({ status: "available" }),
-        ]);
-        setStats(statsData);
-        setBeds(bedsData);
-      } catch (error) {
-        console.error("Error loading data:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadData();
-  }, []);
-
-  if (loading || !stats) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Loading...</p>
-      </div>
-    );
-  }
+export default async function HomePage() {
+  const [stats, beds] = await Promise.all([
+    getCampaignStats(),
+    getAvailableBeds({ status: "available" }),
+  ]);
 
   const campaignPercent = fundingPercent(stats.totalRaised, stats.totalTarget);
   const featuredBeds = beds.slice(0, 3);
