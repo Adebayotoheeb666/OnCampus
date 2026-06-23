@@ -177,24 +177,6 @@ export function HomePageClient({
                 STUDENTS HOUSED
               </span>
             </motion.div>
-            <motion.div
-              variants={cardVariants}
-              className="col-span-2 bg-[var(--primary)] text-[var(--on-primary)] p-4 rounded-xl flex items-center gap-4 shadow-lg"
-            >
-              <div className="p-3 bg-white/10 rounded-lg">
-                <span className="material-symbols-outlined text-3xl">
-                  diversity_3
-                </span>
-              </div>
-              <div>
-                <p className="font-bold text-lg" style={{ fontFamily: "Manrope" }}>
-                  89 Sponsors Active
-                </p>
-                <p className="text-[var(--on-primary-container)] text-sm opacity-80">
-                  Join our community of change-makers today.
-                </p>
-              </div>
-            </motion.div>
           </motion.div>
         </div>
       </section>
