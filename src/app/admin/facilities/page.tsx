@@ -44,6 +44,23 @@ export default async function AdminFacilitiesPage() {
 
   const overdueCount = assetData.filter((a) => a.isOverdue).length;
 
+  const upcomingTasks = schedules.map((item) => {
+    const scheduledDate = new Date(item.schedule.scheduledDate);
+    const now = new Date();
+    const isOverdue = scheduledDate < now;
+
+    return {
+      title: `Maintenance: ${item.assetName}`,
+      month: scheduledDate.toLocaleString("default", { month: "short" }).toUpperCase(),
+      date: scheduledDate.getDate(),
+      location: item.assetName,
+      detail: isOverdue
+        ? `Overdue by ${Math.ceil((now.getTime() - scheduledDate.getTime()) / (24 * 60 * 60 * 1000))} days`
+        : `In ${Math.ceil((scheduledDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000))} days`,
+      isOverdue,
+    };
+  });
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "operational":
