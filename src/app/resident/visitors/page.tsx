@@ -41,41 +41,43 @@ export default function VisitorsPage() {
             </div>
 
             <div className="space-y-3">
-              {[
-                { name: 'Marcus Holloway', time: 'Today • 14:00 - 18:00', status: 'Expected', detail: 'Arrival in 2h' },
-                { name: 'Elena Rodriguez', time: 'Tomorrow • 10:00 - 12:00', status: 'Expected', detail: 'ID Verified' },
-                { name: 'Sarah Jenkins', time: 'Started • 11:30', status: 'Checked In', detail: 'Manage Access', special: true },
-              ].map((visitor, idx) => (
-                <div key={idx} className={`p-4 rounded-xl flex items-center justify-between transition-all ${
-                  visitor.special 
-                    ? 'bg-[#f3f3f6] border border-[#bfc9c6]'
-                    : 'glass-card bg-white/70 backdrop-blur border border-[#e2e2e5]'
-                }`}>
-                  <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                      visitor.special 
-                        ? 'bg-[#059669] text-white'
-                        : 'bg-[#e8e8ea]'
-                    }`}>
-                      <span className="material-symbols-outlined">{visitor.special ? 'how_to_reg' : 'person'}</span>
+              {[].length > 0 ? (
+                [].map((visitor, idx) => (
+                  <div key={idx} className={`p-4 rounded-xl flex items-center justify-between transition-all ${
+                    visitor.special
+                      ? 'bg-[#f3f3f6] border border-[#bfc9c6]'
+                      : 'glass-card bg-white/70 backdrop-blur border border-[#e2e2e5]'
+                  }`}>
+                    <div className="flex items-center gap-4">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                        visitor.special
+                          ? 'bg-[#059669] text-white'
+                          : 'bg-[#e8e8ea]'
+                      }`}>
+                        <span className="material-symbols-outlined">{visitor.special ? 'how_to_reg' : 'person'}</span>
+                      </div>
+                      <div>
+                        <p className="font-bold text-[#00322d]">{visitor.name}</p>
+                        <p className="text-xs text-[#3f4947] font-mono font-bold">{visitor.time}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-bold text-[#00322d]">{visitor.name}</p>
-                      <p className="text-xs text-[#3f4947] font-mono font-bold">{visitor.time}</p>
+                    <div className="text-right">
+                      <span className={`text-xs font-mono font-bold px-3 py-1 rounded-full inline-block ${
+                        visitor.special
+                          ? 'bg-[#059669]/10 text-[#059669]'
+                          : 'bg-[#2563EB]/10 text-[#2563EB]'
+                      }`}>
+                        {visitor.status}
+                      </span>
+                      <p className="text-xs text-[#3f4947] mt-1">{visitor.detail}</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <span className={`text-xs font-mono font-bold px-3 py-1 rounded-full inline-block ${
-                      visitor.special
-                        ? 'bg-[#059669]/10 text-[#059669]'
-                        : 'bg-[#2563EB]/10 text-[#2563EB]'
-                    }`}>
-                      {visitor.status}
-                    </span>
-                    <p className="text-xs text-[#3f4947] mt-1">{visitor.detail}</p>
-                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-[#3f4947]">
+                  No upcoming visitors scheduled
                 </div>
-              ))}
+              )}
             </div>
           </div>
 
@@ -96,21 +98,25 @@ export default function VisitorsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#bfc9c6]">
-                  {[
-                    { name: 'David Chen', date: 'May 12, 2024' },
-                    { name: 'Klara Varga', date: 'May 10, 2024' },
-                    { name: 'Michael Smith', date: 'May 08, 2024' },
-                  ].map((visitor, idx) => (
-                    <tr key={idx} className="hover:bg-[#f3f3f6] transition-colors">
-                      <td className="px-4 py-4 font-bold text-[#00322d]">{visitor.name}</td>
-                      <td className="px-4 py-4 text-[#3f4947]">{visitor.date}</td>
-                      <td className="px-4 py-4 text-right">
-                        <span className="text-xs font-mono font-bold px-2 py-1 bg-[#475569]/10 text-[#475569] rounded">
-                          Checked Out
-                        </span>
+                  {[].length > 0 ? (
+                    [].map((visitor, idx) => (
+                      <tr key={idx} className="hover:bg-[#f3f3f6] transition-colors">
+                        <td className="px-4 py-4 font-bold text-[#00322d]">{visitor.name}</td>
+                        <td className="px-4 py-4 text-[#3f4947]">{visitor.date}</td>
+                        <td className="px-4 py-4 text-right">
+                          <span className="text-xs font-mono font-bold px-2 py-1 bg-[#475569]/10 text-[#475569] rounded">
+                            Checked Out
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={3} className="px-4 py-8 text-center text-[#3f4947]">
+                        No visitor history
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>

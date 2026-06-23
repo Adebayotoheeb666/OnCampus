@@ -22,8 +22,6 @@ export default async function AdminMaintenancePage() {
     (r) => r.status === "resolved",
   ).length;
 
-  // Estimate monthly spend (mock data - would need cost data in schema)
-  const monthlySpend = 12480;
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -37,39 +35,6 @@ export default async function AdminMaintenancePage() {
           </h1>
         </div>
 
-        {/* Monthly Cost Summary */}
-        <div className="mb-6 rounded-xl bg-white p-6 shadow-sm border border-stone-200 relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-4 opacity-10">
-            <span className="material-symbols-outlined text-6xl text-stone-900">
-              payments
-            </span>
-          </div>
-          <div className="relative z-10">
-            <p className="text-xs font-semibold uppercase text-stone-600 mb-1">
-              Monthly Maintenance Spend
-            </p>
-            <div className="mb-4 flex items-baseline gap-2">
-              <span className="text-4xl font-bold text-stone-900">
-                ${(monthlySpend / 100).toLocaleString()}
-              </span>
-              <span className="flex items-center gap-1 text-sm font-bold text-emerald-600">
-                <span className="material-symbols-outlined text-sm">
-                  trending_down
-                </span>
-                4.2%
-              </span>
-            </div>
-            <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-stone-200">
-              <div
-                className="h-full bg-gradient-to-r from-stone-900 to-yellow-600"
-                style={{ width: "65%" }}
-              />
-            </div>
-            <p className="text-xs text-stone-600 italic">
-              Budget utilization: 65% of $19,200 allocation
-            </p>
-          </div>
-        </div>
 
         {/* Stats Grid */}
         <div className="mb-8 grid gap-4 sm:grid-cols-2">

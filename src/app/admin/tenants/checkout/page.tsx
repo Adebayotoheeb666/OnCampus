@@ -7,24 +7,7 @@ export default function AdminTenantCheckoutPage() {
   const [selectedTenant, setSelectedTenant] = useState(0);
   const [showModal, setShowModal] = useState(false);
 
-  const tenants = [
-    {
-      name: "Jordan Davies",
-      roomId: "RM: 402-B",
-      studentId: "ID: 29948",
-      checkout: "Today",
-      initials: "JD",
-      bgColor: "bg-blue-200",
-    },
-    {
-      name: "Amara Lawson",
-      roomId: "RM: 115-A",
-      studentId: "ID: 30122",
-      checkout: "Tomorrow",
-      initials: "AL",
-      bgColor: "bg-stone-300",
-    },
-  ];
+  const tenants = [];
 
   const handleCheckout = () => {
     setShowModal(true);
@@ -51,50 +34,43 @@ export default function AdminTenantCheckoutPage() {
         <section className="mb-10">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-xs font-bold uppercase tracking-widest text-stone-600">
-              EXPIRING SESSIONS (3)
+              EXPIRING SESSIONS
             </h3>
-            <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-[10px] font-bold">
-              URGENT
-            </span>
           </div>
           <div className="space-y-3">
-            {tenants.map((tenant, idx) => (
-              <div
-                key={idx}
-                onClick={() => setSelectedTenant(idx)}
-                className={`border rounded-xl p-4 cursor-pointer transition-all ${
-                  selectedTenant === idx
-                    ? "border-stone-900 bg-white shadow-md"
-                    : "border-stone-200 bg-white hover:border-stone-300"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-12 h-12 rounded-lg ${tenant.bgColor} flex items-center justify-center text-stone-900 font-bold`}
-                    >
-                      {tenant.initials}
+            {tenants.length > 0 ? (
+              tenants.map((tenant, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => setSelectedTenant(idx)}
+                  className={`border rounded-xl p-4 cursor-pointer transition-all ${
+                    selectedTenant === idx
+                      ? "border-stone-900 bg-white shadow-md"
+                      : "border-stone-200 bg-white hover:border-stone-300"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-lg bg-stone-200 flex items-center justify-center text-stone-900 font-bold">
+                        --
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-stone-900">
+                          No tenants scheduled
+                        </h4>
+                        <p className="text-xs text-stone-600 uppercase font-semibold">
+                          Check back soon
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-bold text-stone-900">
-                        {tenant.name}
-                      </h4>
-                      <p className="text-xs text-stone-600 uppercase font-semibold">
-                        {tenant.roomId} • {tenant.studentId}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-red-600 font-bold text-xs">
-                      {tenant.checkout}
-                    </p>
-                    <span className="material-symbols-outlined text-stone-900 text-lg">
-                      chevron_right
-                    </span>
                   </div>
                 </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-stone-500">
+                No tenant checkouts scheduled
               </div>
-            ))}
+            )}
           </div>
         </section>
 

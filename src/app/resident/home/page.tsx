@@ -45,14 +45,7 @@ export default function ResidentHomePage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-[#bfc9c6] pb-4">
           <div>
             <p className="text-xs font-mono font-bold text-[#1961a1] mb-2 tracking-widest">RESIDENT ACCOMMODATION</p>
-            <h2 className="text-4xl font-bold text-[#1a1c1e] md:text-5xl">Block B - 204</h2>
-            <div className="flex items-center gap-3 mt-2">
-              <span className="flex items-center gap-1 text-[#3f4947]">
-                <span className="material-symbols-outlined text-sm">location_on</span> Main Campus West
-              </span>
-              <span className="w-1 h-1 rounded-full bg-[#707977]"></span>
-              <span className="text-[#3f4947]">Single Occupancy</span>
-            </div>
+            <h2 className="text-4xl font-bold text-[#1a1c1e] md:text-5xl">--</h2>
           </div>
           <button className="bg-[#00322d] text-white font-bold px-6 py-3 rounded-xl hover:opacity-90 transition-opacity active:scale-95 flex items-center justify-center gap-2">
             <span className="material-symbols-outlined">build</span>
@@ -124,25 +117,9 @@ export default function ResidentHomePage() {
             {/* Roommate Info */}
             <div className="bg-white border border-[#bfc9c6] rounded-xl p-6">
               <h3 className="text-xs font-mono font-bold text-[#3f4947] mb-4 tracking-widest">ROOMMATE PROFILE</h3>
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-[#e8e8ea] overflow-hidden border-2 border-[#b1eee4] flex items-center justify-center">
-                  <span className="material-symbols-outlined text-2xl text-[#3f4947]">person</span>
-                </div>
-                <div>
-                  <p className="font-bold text-[#00322d]">Alex Johnson</p>
-                  <p className="text-sm text-[#3f4947]">BSc. Computer Science</p>
-                </div>
+              <div className="text-center py-6 text-[#3f4947]">
+                <p className="text-sm">No roommate assigned</p>
               </div>
-              <div className="mt-6 flex flex-wrap gap-2">
-                {['Early Bird', 'Studious', 'Clean'].map((tag, idx) => (
-                  <span key={idx} className="bg-[#e8e8ea] px-3 py-1 rounded-full text-xs font-mono font-bold text-[#3f4947]">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <button className="w-full mt-6 py-3 border border-[#707977] text-[#1a1c1e] font-bold rounded-xl hover:bg-[#f3f3f6] transition-colors active:scale-95">
-                Message Roommate
-              </button>
             </div>
 
             {/* Digital ID Quick Access */}

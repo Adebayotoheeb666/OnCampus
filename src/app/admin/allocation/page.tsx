@@ -52,56 +52,6 @@ export default function AllocationPage() {
           </div>
         </section>
 
-        {/* Stats Overview Bento Grid */}
-        <section className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
-          <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant flex flex-col justify-between">
-            <div className="flex justify-between items-start">
-              <span className="text-on-surface-variant font-label-caps">PENDING</span>
-              <span className="material-symbols-outlined text-secondary">pending_actions</span>
-            </div>
-            <div className="mt-4">
-              <div className="text-3xl font-extrabold text-on-surface">1,284</div>
-              <div className="text-sm text-status-maintenance mt-1">+12 today</div>
-            </div>
-          </div>
-
-          <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant flex flex-col justify-between">
-            <div className="flex justify-between items-start">
-              <span className="text-on-surface-variant font-label-caps">WAITLISTED</span>
-              <span className="material-symbols-outlined text-status-maintenance">hourglass_empty</span>
-            </div>
-            <div className="mt-4">
-              <div className="text-3xl font-extrabold text-on-surface">432</div>
-              <div className="text-sm text-on-surface-variant mt-1">Priority 100L: 89</div>
-            </div>
-          </div>
-
-          <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant flex flex-col justify-between">
-            <div className="flex justify-between items-start">
-              <span className="text-on-surface-variant font-label-caps">ALLOCATED</span>
-              <span className="material-symbols-outlined text-status-available">check_circle</span>
-            </div>
-            <div className="mt-4">
-              <div className="text-3xl font-extrabold text-on-surface">2,560</div>
-              <div className="text-sm text-status-available mt-1">94% Capacity</div>
-            </div>
-          </div>
-
-          <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant bg-gradient-to-br from-primary/5 to-transparent">
-            <div className="flex flex-col h-full">
-              <span className="text-on-surface-variant font-label-caps mb-2">ALLOCATION PROGRESS</span>
-              <div className="flex-1 flex flex-col justify-center">
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm font-bold">Total Processed</span>
-                  <span className="text-sm font-bold">85%</span>
-                </div>
-                <div className="w-full bg-surface-container-high h-3 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-primary to-impact-gold w-[85%] rounded-full"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* Main Content: Filters & Table */}
         <section className="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden">
@@ -147,44 +97,6 @@ export default function AllocationPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant">
-                <tr className="hover:bg-primary/5 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-surface-container-highest"></div>
-                      <div>
-                        <div className="font-body-md font-bold text-on-surface flex items-center gap-2">
-                          Kolawole Adedapo
-                          <span className="bg-error-container text-on-error-container text-[10px] px-1.5 py-0.5 rounded uppercase tracking-wider font-bold">
-                            Priority
-                          </span>
-                        </div>
-                        <div className="text-xs text-on-surface-variant font-data-table">MAT/CS/2024/0042</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="font-body-md font-bold text-primary">100L</span>
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <span className="font-label-caps text-error-critical font-bold">98/100</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-[10px] font-label-caps px-2 py-1 bg-status-sponsored/10 text-status-sponsored rounded-full">
-                      SPONSORED
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="flex items-center gap-1.5 text-status-maintenance font-label-caps">
-                      <span className="w-2 h-2 rounded-full bg-status-maintenance animate-pulse"></span>
-                      WAITLISTED
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <button className="px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-bold shadow hover:shadow-md transition-all">
-                      Allocate
-                    </button>
-                  </td>
-                </tr>
               </tbody>
             </table>
           </div>
