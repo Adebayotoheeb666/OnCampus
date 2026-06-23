@@ -1,6 +1,8 @@
 "use client";
 
 import { AdminNav } from "@/components/layout/admin-nav";
+import { motion } from "framer-motion";
+import { containerVariants, itemVariants, cardVariants } from "@/lib/animations";
 
 export default function AdminSponsorsPage() {
   const sponsors = [
@@ -66,8 +68,9 @@ export default function AdminSponsorsPage() {
     { title: "Lapsed", count: lapsedSponsors.length, sponsors: lapsedSponsors },
   ];
 
-  const SponsorCard = ({ sponsor }: { sponsor: typeof sponsors[0] }) => (
-    <div
+  const SponsorCard = ({ sponsor }: { sponsor: (typeof sponsors)[0] }) => (
+    <motion.div
+      variants={cardVariants}
       className={`bg-white border p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer group ${
         sponsor.hasLeftBorder ? "border-l-4 border-l-emerald-600" : "border-stone-200"
       } ${sponsor.isGrayscale ? "opacity-70 grayscale-[0.2]" : ""}`}
@@ -109,7 +112,7 @@ export default function AdminSponsorsPage() {
           {sponsor.priority}
         </span>
       </div>
-    </div>
+    </motion.div>
   );
 
   return (
@@ -118,55 +121,81 @@ export default function AdminSponsorsPage() {
 
       <main className="mx-auto max-w-7xl px-4 py-10">
         {/* Header */}
-        <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
+        <motion.div
+          className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div variants={itemVariants}>
             <h1 className="text-3xl font-bold text-stone-900">
               Sponsor Management
             </h1>
             <p className="mt-2 text-stone-600">
               Manage institutional partnerships and philanthropic growth.
             </p>
-          </div>
-          <button className="flex items-center gap-2 px-6 py-3 bg-stone-900 text-white rounded-xl font-bold hover:bg-stone-800 transition-colors shadow-sm">
+          </motion.div>
+          <motion.button
+            variants={itemVariants}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center gap-2 px-6 py-3 bg-stone-900 text-white rounded-xl font-bold hover:bg-stone-800 transition-colors shadow-sm"
+          >
             <span className="material-symbols-outlined">add</span>
             Add New Sponsor
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
 
         {/* Search & Filter Bar */}
-        <div className="mb-8 bg-white border border-stone-200 p-4 rounded-xl flex flex-col md:flex-row gap-4">
+        <motion.div
+          className="mb-8 bg-white border border-stone-200 p-4 rounded-xl flex flex-col md:flex-row gap-4"
+          variants={itemVariants}
+          initial="hidden"
+          animate="visible"
+          transition={{ delay: 0.2 }}
+        >
           <div className="relative flex-grow">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-400">
               search
             </span>
             <input
-              className="w-full pl-10 pr-4 py-2 bg-stone-50 border border-stone-200 rounded-lg focus:ring-2 focus:ring-stone-900 focus:border-stone-900 outline-none"
+              className="w-full pl-10 pr-4 py-2 bg-stone-50 border border-stone-200 rounded-lg focus:ring-2 focus:ring-stone-900 focus:border-stone-900 outline-none transition-all"
               placeholder="Search sponsors by name, ID or contact..."
               type="text"
             />
           </div>
-          <select className="bg-stone-50 border border-stone-200 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-stone-900">
+          <select className="bg-stone-50 border border-stone-200 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-stone-900 transition-all hover:border-stone-300">
             <option>Sponsor Type: All</option>
             <option>Individual</option>
             <option>Corporate</option>
             <option>Alumni Association</option>
           </select>
-          <select className="bg-stone-50 border border-stone-200 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-stone-900">
+          <select className="bg-stone-50 border border-stone-200 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-stone-900 transition-all hover:border-stone-300">
             <option>Status: All</option>
             <option>Active</option>
             <option>Pending</option>
             <option>Lapsed</option>
           </select>
-          <button className="p-2 border border-stone-200 rounded-lg hover:bg-stone-100 transition-colors">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-2 border border-stone-200 rounded-lg hover:bg-stone-100 transition-colors"
+          >
             <span className="material-symbols-outlined">filter_list</span>
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
 
         {/* Pipeline Overview */}
-        <div className="mb-8 flex overflow-x-auto gap-4 pb-4">
+        <motion.div
+          className="mb-8 flex overflow-x-auto gap-4 pb-4"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {columns.map((column) => (
-            <div
+            <motion.div
               key={column.title}
+              variants={itemVariants}
               className="min-w-[300px] flex-shrink-0 flex flex-col gap-4"
             >
               <div className="flex items-center justify-between px-2">
@@ -177,7 +206,12 @@ export default function AdminSponsorsPage() {
                   more_horiz
                 </span>
               </div>
-              <div className="flex flex-col gap-4">
+              <motion.div
+                className="flex flex-col gap-4"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+              >
                 {column.sponsors.length > 0 ? (
                   column.sponsors.map((sponsor) => (
                     <SponsorCard key={sponsor.name} sponsor={sponsor} />
@@ -187,23 +221,45 @@ export default function AdminSponsorsPage() {
                     Drop records here
                   </div>
                 ) : null}
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Insights Section */}
-        <div className="mt-12">
-          <h3 className="text-2xl font-bold text-stone-900 mb-6">
+        <motion.div
+          className="mt-12"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          <motion.h3
+            variants={itemVariants}
+            className="text-2xl font-bold text-stone-900 mb-6"
+          >
             Sponsorship Insights
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="md:col-span-2 bg-gradient-to-br from-stone-900 to-stone-800 text-white p-6 rounded-2xl relative overflow-hidden flex flex-col justify-between h-48">
+          </motion.h3>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-4 gap-4"
+            variants={containerVariants}
+          >
+            <motion.div
+              variants={cardVariants}
+              className="md:col-span-2 bg-gradient-to-br from-stone-900 to-stone-800 text-white p-6 rounded-2xl relative overflow-hidden flex flex-col justify-between h-48"
+            >
               <div className="relative z-10">
                 <p className="text-xs font-semibold opacity-70 mb-2 uppercase">
                   Total Funding Secured
                 </p>
-                <p className="text-4xl font-bold">₦48,200,000</p>
+                <motion.p
+                  className="text-4xl font-bold"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5, duration: 0.8 }}
+                >
+                  ₦48,200,000
+                </motion.p>
               </div>
               <div className="relative z-10 flex items-center gap-2">
                 <span className="material-symbols-outlined text-emerald-400">
@@ -216,17 +272,28 @@ export default function AdminSponsorsPage() {
                   monetization_on
                 </span>
               </div>
-            </div>
-            <div className="bg-white border border-stone-200 p-6 rounded-2xl flex flex-col justify-between h-48">
+            </motion.div>
+            <motion.div
+              variants={cardVariants}
+              className="bg-white border border-stone-200 p-6 rounded-2xl flex flex-col justify-between h-48"
+            >
               <p className="text-xs font-semibold uppercase text-stone-600 mb-2">
                 Retention Rate
               </p>
               <p className="text-4xl font-bold text-stone-900">92%</p>
               <div className="w-full bg-stone-200 rounded-full h-2 overflow-hidden">
-                <div className="bg-emerald-600 h-full" style={{ width: "92%" }} />
+                <motion.div
+                  className="bg-emerald-600 h-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: "92%" }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                />
               </div>
-            </div>
-            <div className="bg-white border border-stone-200 p-6 rounded-2xl flex flex-col justify-between h-48">
+            </motion.div>
+            <motion.div
+              variants={cardVariants}
+              className="bg-white border border-stone-200 p-6 rounded-2xl flex flex-col justify-between h-48"
+            >
               <p className="text-xs font-semibold uppercase text-stone-600 mb-2">
                 Avg. Deal Size
               </p>
@@ -235,9 +302,9 @@ export default function AdminSponsorsPage() {
                 <span className="material-symbols-outlined text-sm">groups</span>
                 Across 148 sponsors
               </div>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
       </main>
     </div>
   );

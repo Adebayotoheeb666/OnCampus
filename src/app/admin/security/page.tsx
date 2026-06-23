@@ -1,6 +1,8 @@
 "use client";
 
 import { AdminNav } from "@/components/layout/admin-nav";
+import { motion } from "framer-motion";
+import { containerVariants, itemVariants, cardVariants } from "@/lib/animations";
 
 export default function AdminSecurityPage() {
   const stats = [
@@ -72,11 +74,17 @@ export default function AdminSecurityPage() {
         </div>
 
         {/* Quick Stats */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-2">
+        <motion.div
+          className="mb-8 grid gap-4 sm:grid-cols-2"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {stats.map((stat, idx) => (
-            <div
+            <motion.div
               key={idx}
-              className="rounded-xl bg-white p-4 shadow-sm border border-stone-200"
+              variants={cardVariants}
+              className="rounded-xl bg-white p-4 shadow-sm border border-stone-200 hover:shadow-lg transition-all"
             >
               <p className="text-xs font-semibold uppercase text-stone-600 mb-1">
                 {stat.label}
@@ -86,34 +94,59 @@ export default function AdminSecurityPage() {
                 className="mt-2 h-2 w-full overflow-hidden rounded-full bg-stone-200"
                 style={{ display: stat.label === "Gate Load" ? "block" : "none" }}
               >
-                <div
+                <motion.div
                   className="h-full bg-yellow-600"
-                  style={{ width: "65%" }}
+                  initial={{ width: 0 }}
+                  animate={{ width: "65%" }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
                 />
               </div>
               <p className="mt-2 text-xs text-stone-600">{stat.detail}</p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* View Toggle & Emergency */}
-        <div className="mb-6 space-y-4">
+        <motion.div
+          className="mb-6 space-y-4"
+          variants={itemVariants}
+          initial="hidden"
+          animate="visible"
+          transition={{ delay: 0.2 }}
+        >
           <div className="flex items-center gap-2 rounded-full bg-stone-200 p-1">
-            <button className="flex-1 rounded-full bg-blue-500 text-white py-2 px-4 text-xs font-bold uppercase transition-all">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex-1 rounded-full bg-blue-500 text-white py-2 px-4 text-xs font-bold uppercase transition-all"
+            >
               Gate Activity
-            </button>
-            <button className="flex-1 rounded-full text-stone-700 py-2 px-4 text-xs font-bold uppercase hover:bg-stone-300 transition-all">
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex-1 rounded-full text-stone-700 py-2 px-4 text-xs font-bold uppercase hover:bg-stone-300 transition-all"
+            >
               Expected Visitors
-            </button>
+            </motion.button>
           </div>
-          <button className="w-full bg-red-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg hover:bg-red-700 transition-colors">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full bg-red-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg hover:bg-red-700 transition-colors"
+          >
             <span className="material-symbols-outlined">report_problem</span>
             REPORT SECURITY INCIDENT
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
 
         {/* Gate Activity Feed */}
-        <div className="space-y-4">
+        <motion.div
+          className="space-y-4"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-stone-900">Live Activity</h2>
             <div className="flex items-center gap-2">
@@ -127,8 +160,9 @@ export default function AdminSecurityPage() {
           {activities.map((activity, idx) => {
             if (activity.type === "anomaly") {
               return (
-                <div
+                <motion.div
                   key={idx}
+                  variants={itemVariants}
                   className="rounded-xl bg-red-50 border-2 border-red-600 p-4 flex gap-4 items-start shadow-md"
                 >
                   <div className="w-12 h-12 rounded-lg bg-red-600 flex items-center justify-center flex-shrink-0">
@@ -150,22 +184,31 @@ export default function AdminSecurityPage() {
                       {activity.location} - {activity.detail}
                     </p>
                     <div className="mt-3 flex gap-2">
-                      <button className="bg-red-600 text-white px-3 py-2 rounded-lg text-xs font-bold hover:bg-red-700 transition-colors">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="bg-red-600 text-white px-3 py-2 rounded-lg text-xs font-bold hover:bg-red-700 transition-colors"
+                      >
                         Lock Gate
-                      </button>
-                      <button className="bg-white/20 text-red-900 px-3 py-2 rounded-lg text-xs font-bold border border-red-600 hover:bg-white/30 transition-colors">
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="bg-white/20 text-red-900 px-3 py-2 rounded-lg text-xs font-bold border border-red-600 hover:bg-white/30 transition-colors"
+                      >
                         Review Log
-                      </button>
+                      </motion.button>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               );
             }
 
             return (
-              <div
+              <motion.div
                 key={idx}
-                className="rounded-xl bg-white border border-stone-200 p-3 flex gap-3 items-center"
+                variants={itemVariants}
+                className="rounded-xl bg-white border border-stone-200 p-3 flex gap-3 items-center hover:shadow-md transition-shadow"
               >
                 <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border border-stone-200 bg-stone-200">
                   {activity.image && (
@@ -194,10 +237,10 @@ export default function AdminSecurityPage() {
                     {activity.time}
                   </span>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </main>
     </div>
   );
