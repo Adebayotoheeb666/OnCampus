@@ -66,7 +66,7 @@ export default function AdminSponsorsPage() {
     { title: "Lapsed", count: lapsedSponsors.length, sponsors: lapsedSponsors },
   ];
 
-  const SponsorCard = ({ sponsor }) => (
+  const SponsorCard = ({ sponsor }: { sponsor: typeof sponsors[0] }) => (
     <div
       className={`bg-white border p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer group ${
         sponsor.hasLeftBorder ? "border-l-4 border-l-emerald-600" : "border-stone-200"

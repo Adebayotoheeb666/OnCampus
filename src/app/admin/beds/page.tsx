@@ -1,19 +1,40 @@
-"use client";
-
 import { AdminNav } from "@/components/layout/admin-nav";
+import { getBedInventory } from "@/modules/allocation/queries";
 
-export default function AdminBedsPage() {
+export default async function AdminBedsPage() {
+  const beds = await getBedInventory();
+
+  // Calculate stats from real data
+  const totalBeds = beds.length;
+  const occupiedBeds = beds.filter((b) => b.status === "occupied").length;
+  const availableBeds = beds.filter((b) => b.status === "available").length;
+  const maintenanceBeds = beds.filter((b) => b.status === "maintenance").length;
+  const occupancyRate = totalBeds > 0 ? ((occupiedBeds / totalBeds) * 100).toFixed(1) : 0;
+  const vacancyRate = totalBeds > 0 ? ((availableBeds / totalBeds) * 100).toFixed(1) : 0;
+
   const stats = [
-    { label: "TOTAL BEDS", value: "1,240", detail: "+12 New Units" },
-    { label: "OCCUPIED", value: "1,184", detail: "95% Occupancy" },
-    { label: "AVAILABLE", value: "38", detail: "3.1% Vacancy Rate" },
-    { label: "MAINTENANCE", value: "18", detail: "Average turnaround: 3 days" },
+    { label: "TOTAL BEDS", value: totalBeds.toLocaleString(), detail: "All units" },
+    { label: "OCCUPIED", value: occupiedBeds.toLocaleString(), detail: `${occupancyRate}% Occupancy` },
+    { label: "AVAILABLE", value: availableBeds.toLocaleString(), detail: `${vacancyRate}% Vacancy` },
+    { label: "MAINTENANCE", value: maintenanceBeds.toLocaleString(), detail: "Undergoing repairs" },
   ];
 
-  const blocks = [
-    { name: "Block A - West Wing", total: 120, start: 101, end: 132 },
-    { name: "Block B - Garden View", total: 84, start: 201, end: 216 },
-  ];
+  // Group beds by block
+  const blockMap = new Map<string, typeof beds>();
+  beds.forEach((bed) => {
+    const key = bed.blockId;
+    if (!blockMap.has(key)) {
+      blockMap.set(key, []);
+    }
+    blockMap.get(key)!.push(bed);
+  });
+
+  const blocks = Array.from(blockMap.entries()).map(([blockId, blockBeds]) => ({
+    id: blockId,
+    name: blockBeds[0]?.blockName || "Unknown Block",
+    beds: blockBeds,
+    total: blockBeds.length,
+  }));
 
   const getRoomColor = (status: string) => {
     switch (status) {
@@ -26,16 +47,6 @@ export default function AdminBedsPage() {
       default:
         return { text: "text-stone-600", bg: "bg-stone-600/10" };
     }
-  };
-
-  const generateRooms = (start: number, end: number) => {
-    const statuses = ["occupied", "available", "maintenance", "occupied", "occupied"];
-    const rooms = [];
-    for (let i = start; i <= end; i++) {
-      const status = statuses[Math.floor(Math.random() * statuses.length)];
-      rooms.push({ number: i, status });
-    }
-    return rooms;
   };
 
   return (
@@ -103,7 +114,7 @@ export default function AdminBedsPage() {
         {/* Bed Grid Sections */}
         <div className="space-y-12">
           {blocks.map((block) => (
-            <div key={block.name}>
+            <div key={block.id}>
               <div className="flex items-center gap-4 mb-6">
                 <h3 className="text-xl font-bold text-stone-900">
                   {block.name}
@@ -114,23 +125,23 @@ export default function AdminBedsPage() {
                 </span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
-                {generateRooms(block.start, block.end).map((room) => {
-                  const colors = getRoomColor(room.status);
+                {block.beds.map((bed) => {
+                  const colors = getRoomColor(bed.status || "available");
                   return (
                     <div
-                      key={room.number}
+                      key={bed.id}
                       className="cursor-pointer border border-stone-300 bg-white p-4 rounded-xl flex flex-col items-center gap-3 hover:shadow-md hover:-translate-y-1 transition-all"
                     >
                       <span className={`material-symbols-outlined text-3xl ${colors.text}`}>
                         bed
                       </span>
                       <span className="text-xs font-bold uppercase text-stone-900">
-                        ROOM {room.number}
+                        {bed.roomNumber}-{bed.bedLabel}
                       </span>
                       <div
                         className={`px-2 py-1 rounded-full ${colors.bg} ${colors.text} text-[10px] font-bold uppercase tracking-wider`}
                       >
-                        {room.status}
+                        {bed.status}
                       </div>
                     </div>
                   );

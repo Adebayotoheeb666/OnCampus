@@ -1,5 +1,9 @@
+"use client";
+
 import { AdminNav } from "@/components/layout/admin-nav";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { containerVariants, itemVariants } from "@/lib/animations";
 
 export default function AdminDashboardPage() {
   const dashboards = [
@@ -72,12 +76,18 @@ export default function AdminDashboardPage() {
           </p>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <motion.div
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {dashboards.map((dashboard) => (
+            <motion.div key={dashboard.href} variants={itemVariants}>
             <Link
               key={dashboard.href}
               href={dashboard.href}
-              className="group relative overflow-hidden rounded-xl bg-white p-6 shadow-sm transition-all hover:shadow-lg"
+              className="group relative overflow-hidden rounded-xl bg-white p-6 shadow-sm transition-all hover:shadow-lg block"
             >
               {/* Gradient background */}
               <div
@@ -102,40 +112,46 @@ export default function AdminDashboardPage() {
                 <span className="material-symbols-outlined">arrow_forward</span>
               </div>
             </Link>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Quick Stats */}
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-xl bg-white p-6 shadow-sm border border-stone-200">
+        <motion.div
+          className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div variants={itemVariants} className="rounded-xl bg-white p-6 shadow-sm border border-stone-200">
             <p className="text-sm font-semibold text-stone-600 uppercase tracking-wide">
               Total Beds
             </p>
             <p className="mt-2 text-3xl font-bold text-stone-900">1,240</p>
             <p className="mt-2 text-xs text-stone-500">Across all blocks</p>
-          </div>
-          <div className="rounded-xl bg-white p-6 shadow-sm border border-stone-200">
+          </motion.div>
+          <motion.div variants={itemVariants} className="rounded-xl bg-white p-6 shadow-sm border border-stone-200">
             <p className="text-sm font-semibold text-stone-600 uppercase tracking-wide">
               Occupancy
             </p>
             <p className="mt-2 text-3xl font-bold text-emerald-600">95.4%</p>
             <p className="mt-2 text-xs text-stone-500">1,184 beds occupied</p>
-          </div>
-          <div className="rounded-xl bg-white p-6 shadow-sm border border-stone-200">
+          </motion.div>
+          <motion.div variants={itemVariants} className="rounded-xl bg-white p-6 shadow-sm border border-stone-200">
             <p className="text-sm font-semibold text-stone-600 uppercase tracking-wide">
               Active Sponsors
             </p>
             <p className="mt-2 text-3xl font-bold text-blue-600">89</p>
             <p className="mt-2 text-xs text-stone-500">Supporting students</p>
-          </div>
-          <div className="rounded-xl bg-white p-6 shadow-sm border border-stone-200">
+          </motion.div>
+          <motion.div variants={itemVariants} className="rounded-xl bg-white p-6 shadow-sm border border-stone-200">
             <p className="text-sm font-semibold text-stone-600 uppercase tracking-wide">
               Maintenance Issues
             </p>
             <p className="mt-2 text-3xl font-bold text-orange-600">12</p>
             <p className="mt-2 text-xs text-stone-500">Active requests</p>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   );
