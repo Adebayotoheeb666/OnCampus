@@ -16,52 +16,62 @@ export default async function ImpactPage() {
         </div>
 
         {/* Metric Card 1 */}
-        <div className="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl flex flex-col justify-between h-48">
-          <div>
-            <span className="text-xs font-bold text-status-sponsored bg-status-sponsored/10 px-2 py-1 rounded">LIFETIME IMPACT</span>
-            <h2 className="text-4xl font-bold text-primary mt-4">{stats.fundedBeds || 1248}</h2>
+        {stats.fundedBeds !== undefined && (
+          <div className="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl flex flex-col justify-between h-48">
+            <div>
+              <span className="text-xs font-bold text-status-sponsored bg-status-sponsored/10 px-2 py-1 rounded">LIFETIME IMPACT</span>
+              <h2 className="text-4xl font-bold text-primary mt-4">{stats.fundedBeds}</h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-status-available">diversity_3</span>
+              <span className="text-sm text-on-surface-variant">Students Housed</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-status-available">diversity_3</span>
-            <span className="text-sm text-on-surface-variant">Students Housed</span>
-          </div>
-        </div>
+        )}
 
         {/* Metric Card 2 */}
-        <div className="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl flex flex-col justify-between h-48">
-          <div>
-            <span className="text-xs font-bold text-impact-gold bg-impact-gold/10 px-2 py-1 rounded">ACADEMIC SUCCESS</span>
-            <h2 className="text-4xl font-bold text-primary mt-4">94.2%</h2>
+        {stats.graduationRate !== undefined && (
+          <div className="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl flex flex-col justify-between h-48">
+            <div>
+              <span className="text-xs font-bold text-impact-gold bg-impact-gold/10 px-2 py-1 rounded">ACADEMIC SUCCESS</span>
+              <h2 className="text-4xl font-bold text-primary mt-4">{stats.graduationRate}%</h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-status-maintenance">school</span>
+              <span className="text-sm text-on-surface-variant">Graduation Rate</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-status-maintenance">school</span>
-            <span className="text-sm text-on-surface-variant">Graduation Rate</span>
-          </div>
-        </div>
+        )}
 
         {/* Metric Card 3 */}
-        <div className="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl flex flex-col justify-between h-48">
-          <div>
-            <span className="text-xs font-bold text-status-available bg-status-available/10 px-2 py-1 rounded">EQUITY SCORE</span>
-            <h2 className="text-4xl font-bold text-primary mt-4">88%</h2>
+        {stats.equityScore !== undefined && (
+          <div className="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl flex flex-col justify-between h-48">
+            <div>
+              <span className="text-xs font-bold text-status-available bg-status-available/10 px-2 py-1 rounded">EQUITY SCORE</span>
+              <h2 className="text-4xl font-bold text-primary mt-4">{stats.equityScore}%</h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary">payments</span>
+              <span className="text-sm text-on-surface-variant">Average Need Met</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary">payments</span>
-            <span className="text-sm text-on-surface-variant">Average Need Met</span>
-          </div>
-        </div>
+        )}
 
         {/* Full-width Progress */}
-        <div className="md:col-span-3 bg-surface-container-lowest border border-outline-variant p-6 rounded-xl">
-          <div className="flex justify-between items-end mb-4">
-            <span className="text-xs font-bold text-primary tracking-widest">FREE-BED COVERAGE RATIO</span>
-            <span className="text-sm font-bold text-impact-gold">72% Goal Reached</span>
+        {stats.bedCoverageRatio !== undefined && (
+          <div className="md:col-span-3 bg-surface-container-lowest border border-outline-variant p-6 rounded-xl">
+            <div className="flex justify-between items-end mb-4">
+              <span className="text-xs font-bold text-primary tracking-widest">FREE-BED COVERAGE RATIO</span>
+              <span className="text-sm font-bold text-impact-gold">{stats.bedCoverageRatio}% Goal Reached</span>
+            </div>
+            <div className="w-full h-4 bg-surface-container rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-primary via-primary-fixed to-impact-gold transition-all duration-1000" style={{ width: `${stats.bedCoverageRatio}%` }}></div>
+            </div>
+            {stats.bedsSupportedText && (
+              <p className="mt-4 text-on-surface-variant text-sm">{stats.bedsSupportedText}</p>
+            )}
           </div>
-          <div className="w-full h-4 bg-surface-container rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-primary via-primary-fixed to-impact-gold w-[72%] transition-all duration-1000"></div>
-          </div>
-          <p className="mt-4 text-on-surface-variant text-sm">We are currently supporting 720 out of 1,000 students identified as high-need residents.</p>
-        </div>
+        )}
       </section>
 
       {/* Student Stories Gallery */}
@@ -79,18 +89,20 @@ export default async function ImpactPage() {
             {/* Featured Story */}
             <div className="md:col-span-7 bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden group">
               <div className="grid grid-cols-1 md:grid-cols-2 h-full">
-                <div 
-                  className="h-80 md:h-full bg-cover bg-center" 
-                  style={{
-                    backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuB9UYyV5ooyHFI1FULZZDe7skm-RjWuSvF6YNc4dqx6pQimQdoSvNWnngRVDjUiJJo85aYWKq2gbG9cOf1_xjq_kZP25W47TqOU2RxEATo-9x4fIKDo9s1GyDiBrLO6MdR6eqzk9PyJs08vZ4e_tR56Eyakwm8h0PlbfJ-7aopsrh_9DSMb4JxaAdHdijXmVj6bdb0fCRif6_HCeKjUk0egkocPakihgLImgMX1iBQSS18a2M5r6Pnpvb7n5R5nzyiyjBdI2f7IlTSJ')`
-                  }}
-                />
+                {stories[0]?.imageUrl && (
+                  <div
+                    className="h-80 md:h-full bg-cover bg-center"
+                    style={{
+                      backgroundImage: `url('${stories[0].imageUrl}')`
+                    }}
+                  />
+                )}
                 <div className="p-8 flex flex-col justify-center space-y-6">
-                  <span className="text-xs font-bold text-status-sponsored tracking-widest">CLASS OF 2024</span>
-                  <blockquote className="text-2xl font-bold text-primary italic">&quot;OnCampus didn&apos;t just give me a room; they gave me the mental space to focus on my research without fear of homelessness.&quot;</blockquote>
+                  <span className="text-xs font-bold text-status-sponsored tracking-widest">STUDENT STORY</span>
+                  <blockquote className="text-2xl font-bold text-primary italic">&quot;{stories[0]?.content || stories[0]?.excerpt}&quot;</blockquote>
                   <div>
-                    <p className="font-bold text-primary">{stories[0]?.title || "Marcus J."}</p>
-                    <p className="text-on-surface-variant text-sm">{stories[0]?.excerpt || "Biomedical Engineering"}</p>
+                    <p className="font-bold text-primary">{stories[0]?.title}</p>
+                    <p className="text-on-surface-variant text-sm">{stories[0]?.excerpt}</p>
                   </div>
                   <button className="bg-primary text-on-primary px-6 py-3 rounded-full font-bold self-start hover:bg-primary-container transition-colors active:scale-95">
                     Read Story
@@ -101,15 +113,17 @@ export default async function ImpactPage() {
 
             {/* Small Stories */}
             <div className="md:col-span-5 flex flex-col gap-6">
-              {stories.slice(1, 3).map((story, idx) => (
+              {stories.slice(1, 3).map((story) => (
                 <div key={story.id} className="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl flex gap-6 items-center">
-                  <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 bg-surface-container">
-                    <img 
-                      className="w-full h-full object-cover" 
-                      src={idx === 0 ? "https://lh3.googleusercontent.com/aida-public/AB6AXuC4gl_N9KdHbhouy8d2hdVwvYSa9C0WEBvpBcJnc06hO_wFSe44_HgzXkkwg4V941ivohBLvDaHV9cZ0VhnkFquw8_0A1CVvj-_6AoT9n1vfxGf0J6VtGgy1H-ksNIImwyF5iApxodX6HC9mwmJe7jvDKjH-zwAsfnXmXsZdJLLUod9kqLvjtRWenQMv5-Va-GJu9r31OhMJsQnhrGkhzus2MVLCw4KKFP1nFIBbj_ORw6Rj2v37HbsZkWe9MwSHMcc5HQKOD46baX8" : "https://lh3.googleusercontent.com/aida-public/AB6AXuD0RhRkslj4taY2m4E32qqQk-YjiRsekCh-4mdlhz68lpOs6AgCQUeovU5eVzz6S3_GqnIiC_WC0U8IbV9FF49tnkcmFU-MYsL5u-j9H2--vTYAhhMVS4LziZKy6J5T8Pey3DsVETUgIzrEWW9nVCfdeu18TDFO5GZqTJW24RaCMGgLy56vUo7XbOE1GCsIhdm3PPNtm960fd7-yNrB-rPoj3SvCkJUikm4DDeNfcsAqOl2VgLJ57GxbliRROezDBzrExy7jWshdXSm"}
-                      alt={story.title}
-                    />
-                  </div>
+                  {story.imageUrl && (
+                    <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 bg-surface-container">
+                      <img
+                        className="w-full h-full object-cover"
+                        src={story.imageUrl}
+                        alt={story.title}
+                      />
+                    </div>
+                  )}
                   <div className="space-y-2">
                     <p className="text-sm text-on-surface italic">{story.excerpt}</p>
                     <p className="text-xs font-bold text-primary tracking-widest">{story.title}</p>

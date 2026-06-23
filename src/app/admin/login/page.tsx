@@ -1,17 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
+import { loginAdmin } from '@/modules/auth/actions';
 
 export default function AdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
+    setError(null);
+    startTransition(async () => {
+      const result = await loginAdmin(email, password);
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+      // Navigation is handled by redirect in the server action
+    });
   };
 
   return (
