@@ -56,10 +56,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="md:col-span-2 space-y-4">
                 <h4 className="font-bold text-xs text-[var(--primary)] tracking-widest">QUICK LINKS</h4>
                 <ul className="space-y-2">
-                  <li><a className="text-[var(--on-surface-variant)] text-sm hover:text-[var(--secondary)] transition-colors" href="#inventory">Browse Beds</a></li>
-                  <li><a className="text-[var(--on-surface-variant)] text-sm hover:text-[var(--secondary)] transition-colors" href="#impact">Impact Report</a></li>
+                  <li><a className="text-[var(--on-surface-variant)] text-sm hover:text-[var(--secondary)] transition-colors" href="/beds">Browse Beds</a></li>
+                  <li><a className="text-[var(--on-surface-variant)] text-sm hover:text-[var(--secondary)] transition-colors" href="/impact">Impact Report</a></li>
                   <li><a className="text-[var(--on-surface-variant)] text-sm hover:text-[var(--secondary)] transition-colors" href="#how-it-works">How it Works</a></li>
-                  <li><a className="text-[var(--on-surface-variant)] text-sm hover:text-[var(--secondary)] transition-colors" href="#">FAQs</a></li>
+                  <li><a className="text-[var(--on-surface-variant)] text-sm hover:text-[var(--secondary)] transition-colors" href="/faqs">FAQs</a></li>
                 </ul>
               </div>
 
@@ -67,10 +67,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="md:col-span-3 space-y-4">
                 <h4 className="font-bold text-xs text-[var(--primary)] tracking-widest">LEGAL &amp; COMPLIANCE</h4>
                 <ul className="space-y-2">
-                  <li><a className="text-[var(--on-surface-variant)] text-sm hover:text-[var(--secondary)] transition-colors" href="#">Privacy Policy</a></li>
-                  <li><a className="text-[var(--on-surface-variant)] text-sm hover:text-[var(--secondary)] transition-colors" href="#">Terms of Service</a></li>
-                  <li><a className="text-[var(--on-surface-variant)] text-sm hover:text-[var(--secondary)] transition-colors" href="#">Transparency Report</a></li>
-                  <li><a className="text-[var(--on-surface-variant)] text-sm hover:text-[var(--secondary)] transition-colors" href="#">Audit Statements</a></li>
+                  <li><a className="text-[var(--on-surface-variant)] text-sm hover:text-[var(--secondary)] transition-colors" href="/privacy-policy">Privacy Policy</a></li>
+                  <li><a className="text-[var(--on-surface-variant)] text-sm hover:text-[var(--secondary)] transition-colors" href="/terms-of-service">Terms of Service</a></li>
+                  <li><a className="text-[var(--on-surface-variant)] text-sm hover:text-[var(--secondary)] transition-colors" href="/transparency-report">Transparency Report</a></li>
+                  <li><a className="text-[var(--on-surface-variant)] text-sm hover:text-[var(--secondary)] transition-colors" href="/audit-statement">Audit Statements</a></li>
                 </ul>
               </div>
 

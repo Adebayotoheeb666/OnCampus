@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getAvailableBeds, getBlocks } from "@/modules/sponsor/queries";
+import { BedFilterClient } from "@/components/sponsor/bed-filter-client";
 
 type SearchParams = Promise<{ block?: string; gender?: string; status?: string }>;
 
@@ -29,19 +30,7 @@ export default async function BedsPage({ searchParams }: { searchParams: SearchP
       </section>
 
       {/* Filter Bar */}
-      <section className="sticky top-[64px] z-40 bg-background py-2 border-b border-outline-variant">
-        <div className="flex items-center gap-2 px-4 md:px-6 overflow-x-auto max-w-6xl mx-auto">
-          <button className="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-full font-label-caps text-xs whitespace-nowrap shadow-sm">
-            <span className="material-symbols-outlined text-[18px]">tune</span>
-            Filters
-          </button>
-          <div className="h-6 w-px bg-outline-variant mx-1"></div>
-          <button className="px-4 py-2 border border-outline-variant rounded-full font-label-caps text-xs whitespace-nowrap text-on-surface-variant bg-surface-container-lowest hover:bg-surface-container transition-colors">Status</button>
-          <button className="px-4 py-2 border border-outline-variant rounded-full font-label-caps text-xs whitespace-nowrap text-on-surface-variant bg-surface-container-lowest hover:bg-surface-container transition-colors">Block</button>
-          <button className="px-4 py-2 border border-outline-variant rounded-full font-label-caps text-xs whitespace-nowrap text-on-surface-variant bg-surface-container-lowest hover:bg-surface-container transition-colors">Gender</button>
-          <button className="px-4 py-2 border border-outline-variant rounded-full font-label-caps text-xs whitespace-nowrap text-on-surface-variant bg-surface-container-lowest hover:bg-surface-container transition-colors">Price</button>
-        </div>
-      </section>
+      <BedFilterClient blocks={blocks} />
 
       {/* Sorting & Results Info */}
       <div className="flex justify-between items-center px-4 md:px-6 py-4 max-w-6xl mx-auto border-b border-outline-variant">
@@ -87,8 +76,8 @@ export default async function BedsPage({ searchParams }: { searchParams: SearchP
                     />
                   </div>
                 </div>
-                <Link href={`/sponsor/checkout/${bed.id}`}>
-                  <button className="w-full py-3 bg-primary text-on-primary font-bold rounded-xl active:scale-95 transition-transform flex items-center justify-center gap-2 mt-auto hover:opacity-90">
+                <Link href={`/sponsor/checkout/${bed.id}`} className="w-full mt-auto block">
+                  <button className="w-full py-3 bg-primary text-on-primary font-bold rounded-xl hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
                     <span className="material-symbols-outlined">volunteer_activism</span>
                     Fund This Bed
                   </button>
