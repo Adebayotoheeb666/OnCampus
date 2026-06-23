@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
   { href: "/beds", label: "Sponsor a Bed" },
@@ -47,29 +48,47 @@ export function SiteHeader() {
             Fund a Bed
           </Link>
 
-          <button
+          <motion.button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden flex-shrink-0 p-2 hover:bg-[var(--surface-container-low)] rounded-lg transition-colors"
             aria-label="Toggle menu"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <span className="material-symbols-outlined text-[var(--primary)]" style={{ fontSize: "24px" }}>
+            <motion.span
+              className="material-symbols-outlined text-[var(--primary)] block"
+              style={{ fontSize: "24px" }}
+              animate={{ rotate: mobileMenuOpen ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+              key={mobileMenuOpen ? "close" : "menu"}
+            >
               {mobileMenuOpen ? "close" : "menu"}
-            </span>
-          </button>
+            </motion.span>
+          </motion.button>
         </div>
       </header>
 
       {/* Mobile Menu Drawer */}
-      {mobileMenuOpen && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-40 bg-black/20 md:hidden"
-            onClick={closeMobileMenu}
-          />
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              className="fixed inset-0 z-40 bg-black/20 md:hidden"
+              onClick={closeMobileMenu}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            />
 
-          {/* Menu Panel */}
-          <div className="fixed inset-y-0 right-0 z-50 w-64 bg-[var(--surface-container-lowest)] shadow-xl md:hidden overflow-y-auto">
+            {/* Menu Panel */}
+            <motion.div
+              className="fixed inset-y-0 right-0 z-50 w-64 bg-[var(--surface-container-lowest)] shadow-xl md:hidden overflow-y-auto"
+              initial={{ x: 256 }}
+              animate={{ x: 0 }}
+              exit={{ x: 256 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}>
             <div className="p-4 space-y-4">
               <div className="flex items-center justify-between mb-6">
                 <span className="font-bold text-[var(--primary)]">Menu</span>
@@ -102,9 +121,10 @@ export function SiteHeader() {
                 Fund a Bed
               </Link>
             </div>
-          </div>
-        </>
-      )}
+          </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 }

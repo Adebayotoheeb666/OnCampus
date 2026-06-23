@@ -1,44 +1,29 @@
-"use client";
-
 import { AdminNav } from "@/components/layout/admin-nav";
+import { db } from "@/db";
+import { maintenanceRequests } from "@/db/schema";
+import { desc, eq, sql, and } from "drizzle-orm";
 
-export default function AdminMaintenancePage() {
-  const tasks = [
-    {
-      priority: "urgent",
-      title: "HVAC System Failure - Wing B",
-      assetId: "#HV-992-B",
-      vendor: "Alpha Mechanical Ltd.",
-      vendorType: "Assigned Vendor",
-      status: "in-progress",
-      statusLabel: "In Progress",
-      timeAgo: "Started: 2h ago",
-      icon: "engineering",
-    },
-    {
-      priority: "normal",
-      title: "Lighting Fixture Replacement",
-      assetId: "Study Hall 2",
-      staff: "Mark J. (Internal Staff)",
-      staffType: "Assigned Staff",
-      status: "pending",
-      statusLabel: "Pending",
-      timeAgo: "Est: 45 mins",
-      icon: "person",
-      hasImage: true,
-    },
-    {
-      priority: "normal",
-      title: "Laundry Machine #4 Maintenance",
-      assetId: "Schedule: Preventive",
-      vendor: "CleanTech Systems",
-      vendorType: "Assigned Vendor",
-      status: "in-progress",
-      statusLabel: "In Progress",
-      timeAgo: "ETA: Today",
-      icon: "local_laundry_service",
-    },
-  ];
+export default async function AdminMaintenancePage() {
+  // Fetch all maintenance requests
+  const tasks = await db
+    .select()
+    .from(maintenanceRequests)
+    .where(
+      and(
+        sql`${maintenanceRequests.status} IN ('open', 'assigned', 'in_progress')`,
+      ),
+    )
+    .orderBy(desc(maintenanceRequests.createdAt));
+
+  // Calculate stats
+  const allRequests = await db.select().from(maintenanceRequests);
+  const activeCount = tasks.length;
+  const resolvedCount = allRequests.filter(
+    (r) => r.status === "resolved",
+  ).length;
+
+  // Estimate monthly spend (mock data - would need cost data in schema)
+  const monthlySpend = 12480;
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -65,7 +50,7 @@ export default function AdminMaintenancePage() {
             </p>
             <div className="mb-4 flex items-baseline gap-2">
               <span className="text-4xl font-bold text-stone-900">
-                $12,480.00
+                ${(monthlySpend / 100).toLocaleString()}
               </span>
               <span className="flex items-center gap-1 text-sm font-bold text-emerald-600">
                 <span className="material-symbols-outlined text-sm">
@@ -92,13 +77,13 @@ export default function AdminMaintenancePage() {
             <p className="text-xs font-semibold uppercase text-stone-600 mb-1">
               Active Requests
             </p>
-            <p className="text-2xl font-bold text-yellow-600">24</p>
+            <p className="text-2xl font-bold text-yellow-600">{activeCount}</p>
           </div>
           <div className="rounded-xl bg-white p-4 shadow-sm border border-stone-200">
             <p className="text-xs font-semibold uppercase text-stone-600 mb-1">
               Resolved (30d)
             </p>
-            <p className="text-2xl font-bold text-emerald-600">142</p>
+            <p className="text-2xl font-bold text-emerald-600">{resolvedCount}</p>
           </div>
         </div>
 
@@ -132,69 +117,81 @@ export default function AdminMaintenancePage() {
             Pending & In-Progress
           </h3>
 
-          {tasks.map((task, idx) => (
-            <div
-              key={idx}
-              className="rounded-xl bg-white p-4 shadow-sm border border-stone-200 hover:border-stone-900/30 transition-all"
-            >
-              <div className="mb-3 flex items-start justify-between">
-                <div>
-                  <span
-                    className={`inline-block rounded-full px-2 py-1 text-[10px] font-bold uppercase mb-2 ${
-                      task.priority === "urgent"
-                        ? "bg-red-100 text-red-700"
-                        : "bg-stone-200 text-stone-700"
-                    }`}
-                  >
-                    {task.priority === "urgent" ? "Urgent" : "Normal"}
+          {tasks.length > 0 ? (
+            tasks.map((task) => (
+              <div
+                key={task.id}
+                className="rounded-xl bg-white p-4 shadow-sm border border-stone-200 hover:border-stone-900/30 transition-all"
+              >
+                <div className="mb-3 flex items-start justify-between">
+                  <div>
+                    <span
+                      className={`inline-block rounded-full px-2 py-1 text-[10px] font-bold uppercase mb-2 ${
+                        task.priority === "urgent"
+                          ? "bg-red-100 text-red-700"
+                          : "bg-stone-200 text-stone-700"
+                      }`}
+                    >
+                      {task.priority === "urgent" ? "Urgent" : "Normal"}
+                    </span>
+                    <h4 className="font-bold text-stone-900 mt-1">
+                      {task.title}
+                    </h4>
+                    <p className="text-xs text-stone-600 mt-1">
+                      Category: {task.category}
+                    </p>
+                  </div>
+                  <span className="material-symbols-outlined text-stone-400">
+                    more_vert
                   </span>
-                  <h4 className="font-bold text-stone-900 mt-1">
-                    {task.title}
-                  </h4>
-                  <p className="text-xs text-stone-600 mt-1">
-                    Asset ID: {task.assetId}
-                  </p>
                 </div>
-                <span className="material-symbols-outlined text-stone-400">
-                  more_vert
-                </span>
-              </div>
 
-              {/* Vendor/Staff Info */}
-              <div className="mb-4 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-sm text-blue-600">
-                    {task.icon}
-                  </span>
+                {/* Assigned Info */}
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-sm text-blue-600">
+                      {task.status === "in_progress" ? "engineering" : "pending_actions"}
+                    </span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-bold text-stone-900">
+                      {task.assignedTo || "Unassigned"}
+                    </span>
+                    <span className="text-[10px] text-stone-600 uppercase font-semibold">
+                      {task.assignedTo ? "Assigned Staff" : "Awaiting Assignment"}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold text-stone-900">
-                    {task.vendor || task.staff}
-                  </span>
-                  <span className="text-[10px] text-stone-600 uppercase font-semibold">
-                    {task.vendorType || task.staffType}
-                  </span>
-                </div>
-              </div>
 
-              {/* Status */}
-              <div className="flex items-center justify-between border-t border-stone-200 pt-3">
-                <div className="flex items-center gap-2 text-yellow-600">
-                  <span className="material-symbols-outlined text-sm">
-                    {task.status === "in-progress"
-                      ? "schedule"
-                      : "pending_actions"}
-                  </span>
-                  <span className="text-xs font-bold uppercase">
-                    {task.statusLabel}
+                {/* Status */}
+                <div className="flex items-center justify-between border-t border-stone-200 pt-3">
+                  <div className="flex items-center gap-2 text-yellow-600">
+                    <span className="material-symbols-outlined text-sm">
+                      {task.status === "in_progress"
+                        ? "schedule"
+                        : "pending_actions"}
+                    </span>
+                    <span className="text-xs font-bold uppercase">
+                      {task.status === "open"
+                        ? "Open"
+                        : task.status === "assigned"
+                          ? "Assigned"
+                          : task.status === "in_progress"
+                            ? "In Progress"
+                            : "Resolved"}
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-stone-600">
+                    Submitted: {task.createdAt.toLocaleDateString()}
                   </span>
                 </div>
-                <span className="text-[11px] text-stone-600">
-                  {task.timeAgo}
-                </span>
               </div>
+            ))
+          ) : (
+            <div className="text-center py-8 text-stone-500">
+              No active maintenance requests
             </div>
-          ))}
+          )}
         </div>
       </main>
     </div>
