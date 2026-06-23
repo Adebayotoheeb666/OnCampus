@@ -87,7 +87,7 @@ export default async function ImpactPage() {
                 />
                 <div className="p-8 flex flex-col justify-center space-y-6">
                   <span className="text-xs font-bold text-status-sponsored tracking-widest">CLASS OF 2024</span>
-                  <blockquote className="text-2xl font-bold text-primary italic">"OnCampus didn&apos;t just give me a room; they gave me the mental space to focus on my research without fear of homelessness."</blockquote>
+                  <blockquote className="text-2xl font-bold text-primary italic">&quot;OnCampus didn&apos;t just give me a room; they gave me the mental space to focus on my research without fear of homelessness.&quot;</blockquote>
                   <div>
                     <p className="font-bold text-primary">{stories[0]?.title || "Marcus J."}</p>
                     <p className="text-on-surface-variant text-sm">{stories[0]?.excerpt || "Biomedical Engineering"}</p>

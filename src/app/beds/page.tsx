@@ -72,7 +72,7 @@ export default async function BedsPage({ searchParams }: { searchParams: SearchP
                     <h3 className="font-bold text-primary text-lg">{bed.roomNumber || `Bed ${bed.id}`}</h3>
                     <p className="text-xs font-bold text-on-surface-variant tracking-widest">BLOCK • MIXED</p>
                   </div>
-                  <p className="font-bold text-secondary text-lg">₦{bed.pricePerYear || '1200'}<span className="text-sm font-normal text-on-surface-variant">/yr</span></p>
+                  <p className="font-bold text-secondary text-lg">₦{bed.targetAmountKobo ? (bed.targetAmountKobo / 100).toLocaleString() : '1,200'}<span className="text-sm font-normal text-on-surface-variant">/yr</span></p>
                 </div>
                 {/* Progress Bar */}
                 <div className="mt-4 mb-6">

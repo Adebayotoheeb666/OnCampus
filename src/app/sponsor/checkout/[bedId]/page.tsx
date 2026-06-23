@@ -70,7 +70,7 @@ export default async function CheckoutPage({ params }: { params: Params }) {
                 <div className="mt-8 border-t border-outline-variant pt-6 grid grid-cols-2 gap-4">
                   <div>
                     <span className="block text-xs font-bold text-on-surface-variant tracking-widest mb-1">SPONSORSHIP AMOUNT</span>
-                    <span className="text-2xl font-bold text-primary">${bed.pricePerYear || '1,200'}.00 <small className="text-sm font-normal text-on-surface-variant">/annual</small></span>
+                    <span className="text-2xl font-bold text-primary">${bed.targetAmountKobo ? (bed.targetAmountKobo / 100).toLocaleString() : '1,200'}.00 <small className="text-sm font-normal text-on-surface-variant">/annual</small></span>
                   </div>
                   <div className="text-right flex flex-col justify-end">
                     <div className="flex items-center justify-end gap-2 text-status-sponsored">
@@ -117,7 +117,7 @@ export default async function CheckoutPage({ params }: { params: Params }) {
                 <div className="mt-8 pt-6 border-t border-primary-container">
                   <div className="flex justify-between items-center text-primary-fixed font-bold">
                     <span>TOTAL DUE</span>
-                    <span className="text-2xl">${bed.pricePerYear || '1,200'}.00</span>
+                    <span className="text-2xl">${bed.targetAmountKobo ? (bed.targetAmountKobo / 100).toLocaleString() : '1,200'}.00</span>
                   </div>
                 </div>
               </div>
@@ -129,7 +129,7 @@ export default async function CheckoutPage({ params }: { params: Params }) {
               </div>
               <div>
                 <h5 className="font-bold text-on-surface text-sm">OnCampus Guarantee</h5>
-                <p className="text-xs text-on-surface-variant leading-relaxed">If your sponsored bed remains empty for >30 days, we automatically reassign your impact to a high-priority waitlisted student.</p>
+                <p className="text-xs text-on-surface-variant leading-relaxed">If your sponsored bed remains empty for &gt;30 days, we automatically reassign your impact to a high-priority waitlisted student.</p>
               </div>
             </div>
           </div>

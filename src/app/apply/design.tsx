@@ -37,9 +37,8 @@ export function ApplyPage() {
         {/* Header Section */}
         <header className="mb-10 text-center md:text-left">
           <h1 className="text-4xl md:text-5xl font-extrabold text-[var(--primary)] mb-2">Student Application</h1>
-          <p className="text-lg text-[var(--on-surface-variant)] max-w-2xl">Complete your residency request in three simple steps. We provide both sponsored "Free Bed" and standard "Paid Bed" options.</p>
+          <p className="text-lg text-[var(--on-surface-variant)] max-w-2xl">Complete your residency request in three simple steps. We provide both sponsored &quot;Free Bed&quot; and standard &quot;Paid Bed&quot; options.</p>
         </header>
-
         {/* Progress Indicator */}
         <div className="mb-12">
           <div className="flex justify-between items-center mb-4">
