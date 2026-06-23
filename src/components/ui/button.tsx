@@ -1,5 +1,9 @@
+"use client";
+
 import { type ButtonHTMLAttributes, forwardRef } from "react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { buttonHover } from "@/lib/animations";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "secondary" | "outline" | "ghost";
@@ -21,8 +25,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     return (
-      <button
+      <motion.button
         ref={ref}
+        variants={buttonHover}
+        initial="initial"
+        whileHover="hover"
+        whileTap="tap"
         className={cn(
           "inline-flex items-center justify-center rounded-lg font-medium transition-colors disabled:opacity-50",
           variants[variant],
