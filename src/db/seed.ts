@@ -10,6 +10,10 @@ import {
   assets,
   maintenanceSchedules,
   applicants,
+  sponsors,
+  sponsorshipPledges,
+  sponsorPayments,
+  opexEntries,
 } from "@/db/schema";
 import { SPONSORSHIP_TIERS } from "@/lib/constants";
 
@@ -211,8 +215,156 @@ async function seed() {
     });
   }
 
+  // Seed sponsors with pledges and payments
+  const sponsorData = [
+    { fullName: "Global Tech Fund", type: "organization" as const, email: "contact@globaltechfund.com", status: "active" as const },
+    { fullName: "Sarah Jenkins", type: "individual" as const, email: "sarah@example.com", status: "active" as const },
+    { fullName: "Heritage Foundation", type: "organization" as const, email: "info@heritagefoundation.org", status: "committed" as const },
+    { fullName: "Zion Estates Ltd", type: "organization" as const, email: "partnerships@zionestatees.com", status: "active" as const },
+    { fullName: "Dr. Adams", type: "individual" as const, email: "dr.adams@example.com", status: "lapsed" as const },
+    { fullName: "TechVentures Inc", type: "organization" as const, email: "csr@techventures.ng", status: "active" as const },
+    { fullName: "Alumni Group A", type: "organization" as const, email: "alumni@futa.edu.ng", status: "prospect" as const },
+    { fullName: "John Okoro", type: "individual" as const, email: "john@example.com", status: "active" as const },
+    { fullName: "Corporate Giving Ltd", type: "organization" as const, email: "giving@corporate.ng", status: "active" as const },
+  ];
+
+  const sponsorIds: string[] = [];
+  for (const data of sponsorData) {
+    const sponsorId = `sponsor_${nanoid(8)}`;
+    sponsorIds.push(sponsorId);
+    await db.insert(sponsors).values({
+      id: sponsorId,
+      type: data.type,
+      fullName: data.fullName,
+      organizationName: data.type === "organization" ? data.fullName : undefined,
+      email: data.email,
+      phone: "+234" + Math.floor(Math.random() * 9000000000 + 1000000000),
+      isDiaspora: Math.random() > 0.7,
+      status: data.status,
+      createdAt: now,
+      updatedAt: now,
+    });
+  }
+
+  // Create pledges and payments for sponsors
+  const bedIds = (await db.select({ id: beds.id }).from(beds)).map(b => b.id);
+
+  for (let i = 0; i < Math.min(sponsorIds.length, 6); i++) {
+    const sponsorId = sponsorIds[i];
+    const bedId = bedIds[i % bedIds.length];
+    const pledgeAmount = SPONSORSHIP_TIERS.full_bed.amountKobo;
+
+    const pledgeId = `pledge_${nanoid(8)}`;
+    await db.insert(sponsorshipPledges).values({
+      id: pledgeId,
+      sponsorId,
+      bedId,
+      tier: "full_bed",
+      amountPledged: pledgeAmount,
+      amountPaid: pledgeAmount,
+      recurring: false,
+      status: "fulfilled",
+      createdAt: now,
+    });
+
+    // Create payment record
+    await db.insert(sponsorPayments).values({
+      id: `payment_${nanoid(8)}`,
+      pledgeId,
+      amount: pledgeAmount,
+      provider: "paystack",
+      providerReference: `TXN_${nanoid(12)}`,
+      status: "success",
+      paidAt: new Date(now.getTime() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+    });
+  }
+
+  // Create partial pledges
+  for (let i = 3; i < 5 && i < sponsorIds.length; i++) {
+    const sponsorId = sponsorIds[i];
+    const bedId = bedIds[5 + i];
+    const pledgeAmount = SPONSORSHIP_TIERS.partial.amountKobo;
+
+    const pledgeId = `pledge_${nanoid(8)}`;
+    await db.insert(sponsorshipPledges).values({
+      id: pledgeId,
+      sponsorId,
+      bedId,
+      tier: "partial",
+      amountPledged: pledgeAmount,
+      amountPaid: pledgeAmount,
+      recurring: false,
+      status: "fulfilled",
+      createdAt: now,
+    });
+
+    await db.insert(sponsorPayments).values({
+      id: `payment_${nanoid(8)}`,
+      pledgeId,
+      amount: pledgeAmount,
+      provider: "paystack",
+      providerReference: `TXN_${nanoid(12)}`,
+      status: "success",
+      paidAt: new Date(now.getTime() - Math.random() * 60 * 24 * 60 * 60 * 1000),
+    });
+  }
+
+  // Seed OPEX entries
+  const opexCategories = ["utilities", "staff", "security", "misc"] as const;
+  const opexDescriptions = {
+    utilities: ["Water bill", "Electricity bill", "Internet fees"],
+    staff: ["Cleaning staff salaries", "Security staff", "Maintenance crew"],
+    security: ["CCTV maintenance", "Gate repairs", "Security equipment"],
+    misc: ["Office supplies", "Miscellaneous repairs", "Emergency repairs"],
+  };
+
+  for (const category of opexCategories) {
+    for (let i = 0; i < 3; i++) {
+      const descriptions = opexDescriptions[category];
+      const daysAgo = Math.floor(Math.random() * 90);
+      const incurredDate = new Date(now);
+      incurredDate.setDate(incurredDate.getDate() - daysAgo);
+
+      await db.insert(opexEntries).values({
+        id: `opex_${nanoid(8)}`,
+        category,
+        amount: Math.floor(Math.random() * 1000000) + 100000, // 1k - 11k
+        description: descriptions[Math.floor(Math.random() * descriptions.length)],
+        incurredAt: incurredDate,
+        enteredBy: "admin@oncampus.ng",
+      });
+    }
+  }
+
+  // Add more assets
+  const assetCategories = [
+    { name: "Borehole Pump", category: "water" as const },
+    { name: "Laundromat System", category: "facilities" as const },
+    { name: "Main HVAC System", category: "climate" as const },
+  ];
+
+  for (const asset of assetCategories) {
+    const assetId = `asset_${nanoid(8)}`;
+    await db.insert(assets).values({
+      id: assetId,
+      name: asset.name,
+      category: asset.category,
+      installDate: new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000),
+      serviceIntervalDays: 90,
+    });
+
+    const scheduleDate = new Date(now);
+    scheduleDate.setDate(scheduleDate.getDate() + Math.floor(Math.random() * 90));
+    await db.insert(maintenanceSchedules).values({
+      id: `msched_${nanoid(8)}`,
+      assetId,
+      scheduledDate: scheduleDate,
+      status: Math.random() > 0.5 ? "scheduled" : "completed",
+    });
+  }
+
   console.log(
-    "Seed complete: 2 blocks, 14 beds, 4 laundromat machines, 1 announcement, 1 asset, 4 applicants",
+    "Seed complete: 2 blocks, 14+ beds, 9 sponsors, 8 pledges, 4 laundromat machines, 12 OPEX entries, 4 assets, 4 applicants",
   );
 }
 
