@@ -68,6 +68,8 @@ export default function AdminLoginPage() {
                     placeholder="admin@oncampus.edu"
                     required
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
               </div>
@@ -93,6 +95,8 @@ export default function AdminLoginPage() {
                     placeholder="••••••••"
                     required
                     type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   <button
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors"
@@ -104,14 +108,22 @@ export default function AdminLoginPage() {
                 </div>
               </div>
 
+              {/* Error Message */}
+              {error && (
+                <div className="flex gap-3 rounded-lg bg-red-50 border border-red-200 p-3">
+                  <span className="material-symbols-outlined text-red-600 flex-shrink-0">error</span>
+                  <p className="text-sm text-red-600">{error}</p>
+                </div>
+              )}
+
               {/* Action Button */}
               <button
                 className="w-full bg-primary hover:bg-primary-container text-on-primary py-4 rounded-xl font-headline-md text-headline-md flex items-center justify-center gap-3 transition-all transform active:scale-[0.98] shadow-lg shadow-primary/10"
                 type="submit"
-                disabled={isLoading}
+                disabled={isPending}
               >
-                <span>{isLoading ? 'Authenticating...' : 'Sign In'}</span>
-                <span className="material-symbols-outlined">{isLoading ? 'refresh' : 'login'}</span>
+                <span>{isPending ? 'Authenticating...' : 'Sign In'}</span>
+                <span className="material-symbols-outlined">{isPending ? 'refresh' : 'login'}</span>
               </button>
             </form>
 
