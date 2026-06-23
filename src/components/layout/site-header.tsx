@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+
 const navLinks = [
   { href: "/beds", label: "Sponsor a Bed" },
   { href: "/apply", label: "Apply" },
@@ -10,24 +13,21 @@ const navLinks = [
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-50 border-b border-stone-200 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-700 text-sm font-bold text-white">
-            OC
-          </span>
-          <div>
-            <p className="text-sm font-bold text-stone-900">OnCampus</p>
-            <p className="text-xs text-stone-500">Sponsor a Bed · FUTA</p>
+    <header className="w-full top-0 sticky z-50 border-b border-[var(--outline-variant)]/30 bg-[var(--background)]/85 backdrop-blur" style={{ backdropFilter: "blur(8px)" }}>
+      <div className="flex justify-between items-center px-4 md:px-8 py-3 w-full max-w-7xl mx-auto">
+        <Link href="/" className="flex items-center gap-2 cursor-pointer flex-shrink-0">
+          <div className="w-10 h-10 rounded-full bg-[var(--primary)] flex items-center justify-center text-[var(--on-primary)] font-bold">
+            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
           </div>
+          <span className="text-xl font-bold text-[var(--primary)]" style={{ fontFamily: "Manrope" }}>OnCampus</span>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden lg:flex items-center gap-1">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-stone-600 hover:text-emerald-800"
+              className="text-sm font-semibold text-[var(--on-surface-variant)] hover:text-[var(--primary)] px-4 py-2 rounded-lg hover:bg-[var(--surface-container-low)] transition-all"
             >
               {link.label}
             </Link>
@@ -36,10 +36,14 @@ export function SiteHeader() {
 
         <Link
           href="/beds"
-          className="hidden rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800 md:inline-flex"
+          className="hidden md:inline-flex bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-xl font-bold shadow-sm hover:shadow-md hover:opacity-90 transition-all text-sm"
         >
           Fund a Bed
         </Link>
+
+        <div className="md:hidden flex-shrink-0">
+          <span className="material-symbols-outlined text-[var(--primary)]" style={{ fontSize: "24px" }}>menu</span>
+        </div>
       </div>
     </header>
   );

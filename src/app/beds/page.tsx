@@ -1,4 +1,4 @@
-import { BedCard } from "@/components/sponsor/bed-card";
+import Link from "next/link";
 import { getAvailableBeds, getBlocks } from "@/modules/sponsor/queries";
 
 type SearchParams = Promise<{ block?: string; gender?: string; status?: string }>;
@@ -15,65 +15,93 @@ export default async function BedsPage({ searchParams }: { searchParams: SearchP
   ]);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Bed funding catalogue</h1>
-        <p className="mt-2 text-stone-600">
-          Browse open beds across pilot blocks and fund one that speaks to you.
-        </p>
+    <div className="bg-background min-h-screen pb-24">
+      {/* Search and Global Actions */}
+      <section className="px-4 md:px-6 pt-6 pb-4 max-w-6xl mx-auto">
+        <div className="relative">
+          <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+          <input 
+            className="w-full pl-12 pr-4 py-4 rounded-xl border border-outline-variant bg-surface-container-lowest focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all font-body-md" 
+            placeholder="Search room number or bed ID..." 
+            type="text"
+          />
+        </div>
+      </section>
+
+      {/* Filter Bar */}
+      <section className="sticky top-[64px] z-40 bg-background py-2 border-b border-outline-variant">
+        <div className="flex items-center gap-2 px-4 md:px-6 overflow-x-auto max-w-6xl mx-auto">
+          <button className="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-full font-label-caps text-xs whitespace-nowrap shadow-sm">
+            <span className="material-symbols-outlined text-[18px]">tune</span>
+            Filters
+          </button>
+          <div className="h-6 w-px bg-outline-variant mx-1"></div>
+          <button className="px-4 py-2 border border-outline-variant rounded-full font-label-caps text-xs whitespace-nowrap text-on-surface-variant bg-surface-container-lowest hover:bg-surface-container transition-colors">Status</button>
+          <button className="px-4 py-2 border border-outline-variant rounded-full font-label-caps text-xs whitespace-nowrap text-on-surface-variant bg-surface-container-lowest hover:bg-surface-container transition-colors">Block</button>
+          <button className="px-4 py-2 border border-outline-variant rounded-full font-label-caps text-xs whitespace-nowrap text-on-surface-variant bg-surface-container-lowest hover:bg-surface-container transition-colors">Gender</button>
+          <button className="px-4 py-2 border border-outline-variant rounded-full font-label-caps text-xs whitespace-nowrap text-on-surface-variant bg-surface-container-lowest hover:bg-surface-container transition-colors">Price</button>
+        </div>
+      </section>
+
+      {/* Sorting & Results Info */}
+      <div className="flex justify-between items-center px-4 md:px-6 py-4 max-w-6xl mx-auto border-b border-outline-variant">
+        <span className="text-label-caps font-label-caps text-xs text-on-surface-variant">{beds.length} BEDS AVAILABLE</span>
+        <div className="flex items-center gap-1 text-secondary cursor-pointer">
+          <span className="text-label-caps font-label-caps text-xs">SORT BY: RELEVANCE</span>
+          <span className="material-symbols-outlined text-[16px]">expand_more</span>
+        </div>
       </div>
 
-      <form className="mb-8 flex flex-wrap gap-3">
-        <select
-          name="block"
-          defaultValue={params.block ?? ""}
-          className="rounded-lg border border-stone-200 px-3 py-2 text-sm"
-        >
-          <option value="">All blocks</option>
-          {blocks.map((b) => (
-            <option key={b.id} value={b.id}>
-              {b.name}
-            </option>
-          ))}
-        </select>
-        <select
-          name="gender"
-          defaultValue={params.gender ?? ""}
-          className="rounded-lg border border-stone-200 px-3 py-2 text-sm"
-        >
-          <option value="">All genders</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="mixed">Mixed</option>
-        </select>
-        <select
-          name="status"
-          defaultValue={params.status ?? ""}
-          className="rounded-lg border border-stone-200 px-3 py-2 text-sm"
-        >
-          <option value="">All statuses</option>
-          <option value="available">Open</option>
-          <option value="sponsored">Partially funded</option>
-        </select>
-        <button
-          type="submit"
-          className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800"
-        >
-          Filter
-        </button>
-      </form>
-
-      {beds.length > 0 ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {beds.map((bed) => (
-            <BedCard key={bed.id} bed={bed} />
-          ))}
-        </div>
-      ) : (
-        <p className="rounded-xl border border-dashed border-stone-300 p-12 text-center text-stone-500">
-          No beds match your filters. Try adjusting filters or seed the database.
-        </p>
-      )}
+      {/* Bed Cards Grid */}
+      <section className="px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-8 max-w-6xl mx-auto py-6">
+        {beds && beds.length > 0 ? (
+          beds.map((bed) => (
+            <div key={bed.id} className="group bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden flex flex-col hover:shadow-lg transition-shadow">
+              <div className="relative h-56 overflow-hidden bg-surface-container">
+                <div 
+                  className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500" 
+                  style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuBY726MAmE1vI3SklrXR_ABw2LLoCdVZCOiUsC_8DesIry7Gt8YUYY4f1P-CkDVfZFOh7XoV7dMhX-nfMnpyhQqzfJSY2Px3lhZ8tNA36lY8cj584L_9-JDHdKTnDAKDJbIgwsx4XRIEbPuwUaghAOjZ9NEtmd7E7b7-lNjx9jyUvBPQXcgcIo7A5aJKoOqW8Be_P01kwsy165jFwWVtn1rz2YSBfHIIW59EZtno7b404qjWW-Xt0PA6yoggyJ-qDLcCf-Hny4f649l')` }}
+                />
+                <div className="absolute top-4 right-4 bg-surface-container-lowest/90 backdrop-blur px-3 py-1 rounded-full border border-status-sponsored/20">
+                  <span className="text-xs font-bold text-status-available">AVAILABLE</span>
+                </div>
+              </div>
+              <div className="p-5 flex flex-col flex-grow">
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <h3 className="font-bold text-primary text-lg">{bed.roomNumber || `Bed ${bed.id}`}</h3>
+                    <p className="text-xs font-bold text-on-surface-variant tracking-widest">BLOCK • MIXED</p>
+                  </div>
+                  <p className="font-bold text-secondary text-lg">₦{bed.pricePerYear || '1200'}<span className="text-sm font-normal text-on-surface-variant">/yr</span></p>
+                </div>
+                {/* Progress Bar */}
+                <div className="mt-4 mb-6">
+                  <div className="flex justify-between items-end mb-2">
+                    <span className="text-xs font-bold text-on-surface-variant tracking-widest">FUNDING PROGRESS</span>
+                    <span className="text-sm font-bold text-impact-gold">₦0 REMAINING</span>
+                  </div>
+                  <div className="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-primary to-impact-gold" 
+                      style={{ width: '0%' }}
+                    />
+                  </div>
+                </div>
+                <Link href={`/sponsor/checkout/${bed.id}`}>
+                  <button className="w-full py-3 bg-primary text-on-primary font-bold rounded-xl active:scale-95 transition-transform flex items-center justify-center gap-2 mt-auto hover:opacity-90">
+                    <span className="material-symbols-outlined">volunteer_activism</span>
+                    Fund This Bed
+                  </button>
+                </Link>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="rounded-xl border border-dashed border-outline-variant p-12 text-center text-on-surface-variant col-span-full">
+            No beds match your filters. Try adjusting filters or seed the database.
+          </p>
+        )}
+      </section>
     </div>
   );
 }
