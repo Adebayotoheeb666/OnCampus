@@ -9,6 +9,7 @@ import {
   beds,
   allocationAuditLog,
   auditLog,
+  users,
 } from "@/db/schema";
 import { applicationSchema } from "@/lib/validations/allocation";
 import { computeNeedScore } from "@/lib/allocation/scoring";
@@ -52,6 +53,17 @@ export async function submitApplication(input: unknown): Promise<SubmitApplicati
       applicationType: data.applicationType,
       status: "submitted",
       createdAt: now,
+    });
+
+    await db.insert(users).values({
+      id: `user_${nanoid(12)}`,
+      email: data.email,
+      phone: data.phone,
+      fullName: data.fullName,
+      role: "resident",
+      tenantId: null,
+      createdAt: now,
+      updatedAt: now,
     });
 
     if (needScore !== null) {
