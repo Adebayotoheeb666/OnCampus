@@ -66,25 +66,25 @@ export default function ResidentIdPage() {
             </div>
             {/* Info */}
             <div className="col-span-2 flex flex-col justify-center">
-              <h2 className="text-lg font-bold text-[#00322d] truncate">Tunde Olatunji</h2>
-              <p className="text-xs text-[#3f4947] mt-0.5 font-mono font-bold">JAMB: 2024847192KF</p>
+              <h2 className="text-lg font-bold text-[#00322d] truncate">--</h2>
+              <p className="text-xs text-[#3f4947] mt-0.5 font-mono font-bold">--</p>
             </div>
             {/* Secondary Meta Grid */}
             <div className="col-span-3 grid grid-cols-2 gap-4 mt-2">
               <div className="p-3 bg-[#f3f3f6] rounded-lg border border-[#bfc9c6]">
                 <p className="text-xs font-mono font-bold text-[#3f4947] mb-1 uppercase">Assignment</p>
-                <p className="text-sm font-bold text-[#00322d]">Block B - 204</p>
+                <p className="text-sm font-bold text-[#00322d]">--</p>
               </div>
               <div className="p-3 bg-[#f3f3f6] rounded-lg border border-[#bfc9c6]">
                 <p className="text-xs font-mono font-bold text-[#3f4947] mb-1 uppercase">Validity</p>
-                <p className="text-sm font-bold text-[#2563EB]">July 2024</p>
+                <p className="text-sm font-bold text-[#2563EB]">--</p>
               </div>
             </div>
           </div>
 
           {/* Footer Security String */}
           <div className="px-6 py-3 bg-[#00322d] text-white text-center">
-            <span className="text-xs font-mono font-bold tracking-widest opacity-80">TOKEN: ID-X92-ONCAMPUS-2024-SECURE</span>
+            <span className="text-xs font-mono font-bold tracking-widest opacity-80">TOKEN: --</span>
           </div>
         </div>
 

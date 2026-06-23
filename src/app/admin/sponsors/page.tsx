@@ -5,67 +5,12 @@ import { motion } from "framer-motion";
 import { containerVariants, itemVariants, cardVariants } from "@/lib/animations";
 
 export default function AdminSponsorsPage() {
-  const sponsors = [
-    {
-      name: "Global Tech Fund",
-      type: "Corporate",
-      value: "$15,000",
-      valueLabel: "Est. Value",
-      priority: "High Priority",
-      lastContact: "Last: 2 days ago",
-      column: "prospect",
-    },
-    {
-      name: "Alumni Group A",
-      type: "Alumni",
-      value: "₦2.4M",
-      valueLabel: "Est. Value",
-      priority: "Neutral",
-      lastContact: "Last: 1 week ago",
-      column: "prospect",
-    },
-    {
-      name: "Heritage Foundation",
-      type: "Institutional",
-      value: "$50,000",
-      valueLabel: "Committed",
-      priority: "Follow-up Due",
-      lastContact: "Last: Today",
-      column: "committed",
-    },
-    {
-      name: "Zion Estates Ltd",
-      type: "Corporate",
-      value: "₦12.5M",
-      valueLabel: "Current Value",
-      priority: "Active",
-      lastContact: "Last: 3 weeks ago",
-      column: "active",
-      hasLeftBorder: true,
-    },
-    {
-      name: "Dr. Sarah Adams",
-      type: "Individual",
-      value: "₦500,000",
-      valueLabel: "Last Value",
-      priority: "Lapsed",
-      lastContact: "Last: 6 months ago",
-      column: "lapsed",
-      isGrayscale: true,
-    },
-  ];
-
-  const prospectSponsors = sponsors.filter((s) => s.column === "prospect");
-  const committedSponsors = sponsors.filter((s) => s.column === "committed");
-  const activeSponsors = sponsors.filter((s) => s.column === "active");
-  const lapsedSponsors = sponsors.filter((s) => s.column === "lapsed");
-
   const columns = [
-    { title: "Prospect", count: prospectSponsors.length, sponsors: prospectSponsors },
-    { title: "Contacted", count: 12, sponsors: [] },
-    { title: "Committed", count: committedSponsors.length, sponsors: committedSponsors },
-    { title: "Active", count: activeSponsors.length, sponsors: activeSponsors },
-    { title: "Lapsed", count: lapsedSponsors.length, sponsors: lapsedSponsors },
+    { title: "Prospect", count: 0, sponsors: [] },
+    { title: "Contacted", count: 0, sponsors: [] },
+    { title: "Committed", count: 0, sponsors: [] },
+    { title: "Active", count: 0, sponsors: [] },
+    { title: "Lapsed", count: 0, sponsors: [] },
   ];
 
   const SponsorCard = ({ sponsor }: { sponsor: (typeof sponsors)[0] }) => (
@@ -226,85 +171,6 @@ export default function AdminSponsorsPage() {
           ))}
         </motion.div>
 
-        {/* Insights Section */}
-        <motion.div
-          className="mt-12"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <motion.h3
-            variants={itemVariants}
-            className="text-2xl font-bold text-stone-900 mb-6"
-          >
-            Sponsorship Insights
-          </motion.h3>
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-4 gap-4"
-            variants={containerVariants}
-          >
-            <motion.div
-              variants={cardVariants}
-              className="md:col-span-2 bg-gradient-to-br from-stone-900 to-stone-800 text-white p-6 rounded-2xl relative overflow-hidden flex flex-col justify-between h-48"
-            >
-              <div className="relative z-10">
-                <p className="text-xs font-semibold opacity-70 mb-2 uppercase">
-                  Total Funding Secured
-                </p>
-                <motion.p
-                  className="text-4xl font-bold"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5, duration: 0.8 }}
-                >
-                  ₦48,200,000
-                </motion.p>
-              </div>
-              <div className="relative z-10 flex items-center gap-2">
-                <span className="material-symbols-outlined text-emerald-400">
-                  trending_up
-                </span>
-                <span className="text-sm">+12% vs last quarter</span>
-              </div>
-              <div className="absolute -right-10 -bottom-10 opacity-10">
-                <span className="material-symbols-outlined text-[160px]">
-                  monetization_on
-                </span>
-              </div>
-            </motion.div>
-            <motion.div
-              variants={cardVariants}
-              className="bg-white border border-stone-200 p-6 rounded-2xl flex flex-col justify-between h-48"
-            >
-              <p className="text-xs font-semibold uppercase text-stone-600 mb-2">
-                Retention Rate
-              </p>
-              <p className="text-4xl font-bold text-stone-900">92%</p>
-              <div className="w-full bg-stone-200 rounded-full h-2 overflow-hidden">
-                <motion.div
-                  className="bg-emerald-600 h-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: "92%" }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                />
-              </div>
-            </motion.div>
-            <motion.div
-              variants={cardVariants}
-              className="bg-white border border-stone-200 p-6 rounded-2xl flex flex-col justify-between h-48"
-            >
-              <p className="text-xs font-semibold uppercase text-stone-600 mb-2">
-                Avg. Deal Size
-              </p>
-              <p className="text-4xl font-bold text-stone-900">$4,200</p>
-              <div className="flex items-center gap-2 text-stone-600 text-xs">
-                <span className="material-symbols-outlined text-sm">groups</span>
-                Across 148 sponsors
-              </div>
-            </motion.div>
-          </motion.div>
-        </motion.div>
       </main>
     </div>
   );

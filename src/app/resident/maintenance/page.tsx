@@ -6,32 +6,8 @@ import Link from 'next/link';
 export default function MaintenancePage() {
   const [activeTab, setActiveTab] = useState('active');
 
-  const activeRequests = [
-    {
-      type: 'PLUMBING',
-      title: 'Leaking Faucet',
-      status: 'IN PROGRESS',
-      description: 'The bathroom sink faucet is dripping constantly, even when tightly shut. Increasing water waste since yesterday.',
-      date: 'OCT 24, 2023',
-    },
-    {
-      type: 'ELECTRICAL',
-      title: 'Desk Lamp Flicker',
-      status: 'PENDING',
-      description: 'Main desk light flickers every few minutes. Tried changing the bulb but the issue persists. Likely socket issue.',
-      date: 'OCT 26, 2023',
-    },
-  ];
-
-  const resolvedRequests = [
-    {
-      type: 'FURNITURE',
-      title: 'Loose Chair Leg',
-      status: 'RESOLVED',
-      description: 'Left front leg of the study chair was wobbling significantly. Fixed by technical team.',
-      date: 'OCT 12, 2023',
-    },
-  ];
+  const activeRequests = [];
+  const resolvedRequests = [];
 
   const getStatusColor = (status: string) => {
     if (status === 'IN PROGRESS') return 'bg-[#D97706]/10 text-[#D97706] border-[#D97706]/20';
@@ -86,29 +62,35 @@ export default function MaintenancePage() {
 
         {/* Requests Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-          {(activeTab === 'active' ? activeRequests : resolvedRequests).map((request, idx) => (
-            <div
-              key={idx}
-              className="bg-white border border-[#bfc9c6] p-6 rounded-xl flex flex-col gap-4 group hover:shadow-lg transition-all duration-300"
-            >
-              <div className="flex justify-between items-start">
-                <div className="flex flex-col gap-1">
-                  <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full inline-block w-fit ${getTypeColor(request.type)}`}>
-                    {request.type}
+          {(activeTab === 'active' ? activeRequests : resolvedRequests).length > 0 ? (
+            (activeTab === 'active' ? activeRequests : resolvedRequests).map((request, idx) => (
+              <div
+                key={idx}
+                className="bg-white border border-[#bfc9c6] p-6 rounded-xl flex flex-col gap-4 group hover:shadow-lg transition-all duration-300"
+              >
+                <div className="flex justify-between items-start">
+                  <div className="flex flex-col gap-1">
+                    <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full inline-block w-fit ${getTypeColor(request.type)}`}>
+                      {request.type}
+                    </span>
+                    <h3 className="text-lg font-bold text-[#00322d] mt-1">{request.title}</h3>
+                  </div>
+                  <span className={`text-xs font-mono font-bold px-3 py-1 rounded-full border ${getStatusColor(request.status)}`}>
+                    {request.status}
                   </span>
-                  <h3 className="text-lg font-bold text-[#00322d] mt-1">{request.title}</h3>
                 </div>
-                <span className={`text-xs font-mono font-bold px-3 py-1 rounded-full border ${getStatusColor(request.status)}`}>
-                  {request.status}
-                </span>
+                <p className="text-[#3f4947] text-sm line-clamp-2">{request.description}</p>
+                <div className="flex items-center gap-2 mt-auto pt-4 border-t border-[#bfc9c6]">
+                  <span className="material-symbols-outlined text-base text-[#3f4947]">calendar_today</span>
+                  <span className="text-xs font-mono font-bold text-[#3f4947]">SUBMITTED: {request.date}</span>
+                </div>
               </div>
-              <p className="text-[#3f4947] text-sm line-clamp-2">{request.description}</p>
-              <div className="flex items-center gap-2 mt-auto pt-4 border-t border-[#bfc9c6]">
-                <span className="material-symbols-outlined text-base text-[#3f4947]">calendar_today</span>
-                <span className="text-xs font-mono font-bold text-[#3f4947]">SUBMITTED: {request.date}</span>
-              </div>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-8 text-[#3f4947]">
+              No maintenance requests
             </div>
-          ))}
+          )}
         </div>
       </main>
 
