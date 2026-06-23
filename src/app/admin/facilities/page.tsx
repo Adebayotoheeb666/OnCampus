@@ -1,71 +1,48 @@
-"use client";
-
 import { AdminNav } from "@/components/layout/admin-nav";
+import { db } from "@/db";
+import { assets, maintenanceSchedules } from "@/db/schema";
+import { desc, eq } from "drizzle-orm";
 
-export default function AdminFacilitiesPage() {
-  const assets = [
-    {
-      name: "Generator 1",
-      icon: "electric_bolt",
-      assetId: "EDU-PWR-001",
-      status: "operational",
-      lastServiced: "Oct 12, 2023",
-      nextService: "In 12 Days",
-      nextServiceColor: "text-yellow-600",
-    },
-    {
-      name: "Borehole Pump",
-      icon: "water_pump",
-      assetId: "EDU-WTR-042",
-      status: "critical",
-      lastServiced: "Aug 05, 2023",
-      nextService: "Overdue 4 Days",
-      nextServiceColor: "text-red-600",
-      isCritical: true,
-    },
-    {
-      name: "Laundromat Machines",
-      icon: "local_laundry_service",
-      assetId: "EDU-FAC-009 (Cluster)",
-      status: "maintenance",
-      lastServiced: "Jan 15, 2024",
-      nextService: "In 88 Days",
-      nextServiceColor: "text-stone-900",
-    },
-    {
-      name: "Main HVAC System",
-      icon: "hvac",
-      assetId: "EDU-CLIM-012",
-      status: "operational",
-      lastServiced: "Nov 30, 2023",
-      nextService: "In 45 Days",
-      nextServiceColor: "text-stone-900",
-    },
-  ];
+export default async function AdminFacilitiesPage() {
+  // Fetch all assets
+  const assetList = await db
+    .select()
+    .from(assets)
+    .orderBy(assets.name);
 
-  const upcomingTasks = [
-    {
-      date: "12",
-      month: "FEB",
-      title: "Generator Refueling",
-      location: "Main Power Shed",
-      isOverdue: false,
-    },
-    {
-      date: "04",
-      month: "OVER",
-      title: "Borehole Inspection",
-      detail: "URGENT: Technician No-show",
-      isOverdue: true,
-    },
-    {
-      date: "01",
-      month: "MAR",
-      title: "HVAC Filter Swap",
-      detail: "Team B Schedule",
-      isOverdue: false,
-    },
-  ];
+  // Fetch upcoming maintenance schedules
+  const schedules = await db
+    .select({
+      schedule: maintenanceSchedules,
+      assetName: assets.name,
+    })
+    .from(maintenanceSchedules)
+    .innerJoin(assets, eq(maintenanceSchedules.assetId, assets.id))
+    .orderBy(maintenanceSchedules.scheduledDate);
+
+  // Calculate asset status
+  const assetData = assetList.map((asset) => {
+    const now = new Date();
+    const lastServiced = asset.lastServiced;
+    const nextServiceDue = asset.serviceIntervalDays
+      ? new Date(lastServiced!.getTime() + asset.serviceIntervalDays * 24 * 60 * 60 * 1000)
+      : null;
+
+    const isOverdue = nextServiceDue && nextServiceDue < now;
+    const daysUntilService = nextServiceDue
+      ? Math.ceil((nextServiceDue.getTime() - now.getTime()) / (24 * 60 * 60 * 1000))
+      : null;
+
+    return {
+      ...asset,
+      status: isOverdue ? "critical" : "operational",
+      lastServicedDate: lastServiced?.toLocaleDateString(),
+      daysUntilService,
+      isOverdue,
+    };
+  });
+
+  const overdueCount = assetData.filter((a) => a.isOverdue).length;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -117,13 +94,13 @@ export default function AdminFacilitiesPage() {
                 <span className="text-[10px] font-semibold uppercase text-stone-600">
                   Active Assets
                 </span>
-                <span className="text-2xl font-bold text-stone-900">42</span>
+                <span className="text-2xl font-bold text-stone-900">{assetList.length}</span>
               </div>
               <div className="bg-red-50 border border-red-200 p-4 rounded-xl flex flex-col min-w-[140px]">
                 <span className="text-[10px] font-semibold uppercase text-red-900">
                   Overdue Service
                 </span>
-                <span className="text-2xl font-bold text-red-600">03</span>
+                <span className="text-2xl font-bold text-red-600">{overdueCount}</span>
               </div>
             </div>
           </div>
@@ -148,63 +125,83 @@ export default function AdminFacilitiesPage() {
 
           {/* Asset Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {assets.map((asset) => {
-              const colors = getStatusColor(asset.status);
-              return (
-                <div
-                  key={asset.assetId}
-                  className={`border p-6 rounded-xl hover:shadow-lg transition-all ${
-                    asset.isCritical
-                      ? "border-red-200 bg-white relative overflow-hidden"
-                      : "border-stone-200 bg-white"
-                  }`}
-                >
-                  {asset.isCritical && (
-                    <div className="absolute top-0 right-0 p-2 bg-red-600 text-white text-[10px] font-bold">
-                      CRITICAL
-                    </div>
-                  )}
-                  <div className="flex justify-between items-start mb-4">
-                    <div className={`p-3 rounded-full ${colors.bg}`}>
-                      <span className={`material-symbols-outlined ${colors.text}`}>
-                        {asset.icon}
-                      </span>
-                    </div>
-                    <span
-                      className={`text-[10px] px-2 py-1 rounded-full font-bold uppercase ${colors.badge}`}
-                    >
-                      {asset.status === "operational"
-                        ? "Operational"
-                        : asset.status === "critical"
-                          ? "Overdue"
-                          : "Maintenance"}
-                    </span>
-                  </div>
-                  <h4 className="text-lg font-bold text-stone-900 mb-1">
-                    {asset.name}
-                  </h4>
-                  <p className="text-[11px] text-stone-600 mb-4 uppercase font-semibold">
-                    Asset ID: {asset.assetId}
-                  </p>
-                  <div className="space-y-3 pt-4 border-t border-stone-200">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-stone-600">Last Serviced</span>
-                      <span className="text-stone-900 font-medium">
-                        {asset.lastServiced}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-stone-600">Next Service</span>
+            {assetData.length > 0 ? (
+              assetData.map((asset) => {
+                const colors = getStatusColor(asset.status);
+                const nextServiceText = asset.isOverdue
+                  ? `Overdue ${Math.abs(asset.daysUntilService!)} days`
+                  : asset.daysUntilService
+                    ? `In ${asset.daysUntilService} days`
+                    : "Not scheduled";
+
+                return (
+                  <div
+                    key={asset.id}
+                    className={`border p-6 rounded-xl hover:shadow-lg transition-all ${
+                      asset.isOverdue
+                        ? "border-red-200 bg-white relative overflow-hidden"
+                        : "border-stone-200 bg-white"
+                    }`}
+                  >
+                    {asset.isOverdue && (
+                      <div className="absolute top-0 right-0 p-2 bg-red-600 text-white text-[10px] font-bold">
+                        CRITICAL
+                      </div>
+                    )}
+                    <div className="flex justify-between items-start mb-4">
+                      <div className={`p-3 rounded-full ${colors.bg}`}>
+                        <span className={`material-symbols-outlined ${colors.text}`}>
+                          {asset.category === "power"
+                            ? "electric_bolt"
+                            : asset.category === "water"
+                              ? "water_pump"
+                              : asset.category === "laundry"
+                                ? "local_laundry_service"
+                                : "hvac"}
+                        </span>
+                      </div>
                       <span
-                        className={`font-bold italic ${asset.nextServiceColor}`}
+                        className={`text-[10px] px-2 py-1 rounded-full font-bold uppercase ${colors.badge}`}
                       >
-                        {asset.nextService}
+                        {asset.status === "operational"
+                          ? "Operational"
+                          : "Overdue"}
                       </span>
                     </div>
+                    <h4 className="text-lg font-bold text-stone-900 mb-1">
+                      {asset.name}
+                    </h4>
+                    <p className="text-[11px] text-stone-600 mb-4 uppercase font-semibold">
+                      Asset ID: {asset.id}
+                    </p>
+                    <div className="space-y-3 pt-4 border-t border-stone-200">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-stone-600">Last Serviced</span>
+                        <span className="text-stone-900 font-medium">
+                          {asset.lastServicedDate || "Never"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-stone-600">Next Service</span>
+                        <span
+                          className={`font-bold italic ${
+                            asset.isOverdue
+                              ? "text-red-600"
+                              : "text-stone-900"
+                          }`}
+                        >
+                          {nextServiceText}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            ) : (
+              <div className="col-span-2 text-center py-8 text-stone-500">
+                No assets found
+              </div>
+            )}
           </div>
         </div>
 
